@@ -1,0 +1,8 @@
+{
+  "name": "xxyy-trade",
+  "description": "Trade tokens on Solana/ETH/BSC/Base chains via XXYY Open API using natural language",
+  "version": "1.0.0",
+  "author": {
+    "name": "XXYY"
+  }
+}
