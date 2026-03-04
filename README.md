@@ -1,14 +1,30 @@
 # XXYY Trade Skill
 
-Trade tokens on **Solana**, **Ethereum**, **BSC**, and **Base** chains via [XXYY](https://www.xxyy.io) Open API -- directly from Claude Code using natural language.
+Trade tokens on **Solana**, **Ethereum**, **BSC**, and **Base** chains via [XXYY](https://www.xxyy.io) Open API -- using natural language. Supports both **Claude Code** and **OpenClaw**.
 
 ## Install
+
+### Claude Code
 
 ```bash
 /install github:Jimmy-Holiday/xxyy-trade-skill
 ```
 
 Or manually: copy `skills/xxyy-trade/` into your project's `.claude/skills/` directory.
+
+### OpenClaw
+
+Paste the repo URL in your OpenClaw conversation:
+
+```
+https://github.com/Jimmy-Holiday/xxyy-trade-skill
+```
+
+Or via ClawHub CLI:
+
+```bash
+clawhub install xxyy-trade
+```
 
 ## Setup
 
