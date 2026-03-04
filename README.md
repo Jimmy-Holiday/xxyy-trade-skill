@@ -7,7 +7,7 @@ Trade tokens on **Solana**, **Ethereum**, **BSC**, and **Base** chains via [XXYY
 ### Claude Code
 
 ```bash
-/install github:Jimmy-Holiday/xxyy-trade-skill
+/plugin add github:Jimmy-Holiday/xxyy-trade-skill
 ```
 
 Or manually: copy `skills/xxyy-trade/` into your project's `.claude/skills/` directory.
