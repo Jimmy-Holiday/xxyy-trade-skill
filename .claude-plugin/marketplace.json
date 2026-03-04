@@ -1,0 +1,20 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "xxyy-trade-skill",
+  "description": "Trade tokens on Solana/ETH/BSC/Base chains via XXYY Open API using natural language",
+  "owner": {
+    "name": "XXYY"
+  },
+  "plugins": [
+    {
+      "name": "xxyy-trade",
+      "description": "Trade tokens on Solana/ETH/BSC/Base chains via XXYY Open API using natural language",
+      "version": "1.0.0",
+      "author": {
+        "name": "XXYY"
+      },
+      "source": ".",
+      "category": "trading"
+    }
+  ]
+}
