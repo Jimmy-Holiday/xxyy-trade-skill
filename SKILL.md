@@ -26,7 +26,7 @@ On-chain token trading on Solana, Ethereum, BSC, and Base via XXYY Open API.
 ## Prerequisites
 
 Set environment variables before use:
-- `XXYY_API_KEY` (required) -- Your XXYY Open API Key (format: `xxyy_ak_xxxx`). Get one at https://www.xxyy.io
+- `XXYY_API_KEY` (required) -- Your XXYY Open API Key (format: `xxyy_ak_xxxx`). How to get one: visit https://xxyy.io, register and log in, click the 9-dot grid icon in the top toolbar to open the API Key management page, then generate a new API Key.
 - `XXYY_API_BASE_URL` (optional) -- API base URL, defaults to `https://www.xxyy.io`
 
 ## Authentication
@@ -36,7 +36,7 @@ All requests require header: `Authorization: Bearer $XXYY_API_KEY`
 ## API Reference
 
 ### Buy Token
-`POST ${XXYY_API_BASE_URL:-https://www.xxyy.io}/open/api/swap`
+`POST ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/swap`
 
 ```json
 {
@@ -60,7 +60,7 @@ Parameters:
 - `tip` -- Jito tip, SOL chain only, default 0.001
 
 ### Sell Token
-`POST ${XXYY_API_BASE_URL:-https://www.xxyy.io}/open/api/swap`
+`POST ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/swap`
 
 ```json
 {
@@ -75,12 +75,12 @@ Parameters:
 - `amount` -- Sell percentage (0-100). Example: 50 = sell 50% of holdings
 
 ### Query Trade
-`GET ${XXYY_API_BASE_URL:-https://www.xxyy.io}/open/api/trade?txId=<tx_id>`
+`GET ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/trade?txId=<tx_id>`
 
 Response fields: txId, status (pending/success/failed), statusDesc, chain, tokenAddress, walletAddress, isBuy, baseAmount, quoteAmount
 
 ### Ping
-`GET ${XXYY_API_BASE_URL:-https://www.xxyy.io}/open/api/ping`
+`GET ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/ping`
 
 Returns "pong" if API key is valid.
 
@@ -117,12 +117,12 @@ Returns "pong" if API key is valid.
 
 ```bash
 # Buy
-curl -s -X POST "${XXYY_API_BASE_URL:-https://www.xxyy.io}/open/api/swap" \
+curl -s -X POST "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/swap" \
   -H "Authorization: Bearer $XXYY_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"chain":"sol","walletAddress":"...","tokenAddress":"...","isBuy":true,"amount":0.1}'
 
 # Query
-curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/open/api/trade?txId=..." \
+curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/trade?txId=..." \
   -H "Authorization: Bearer $XXYY_API_KEY"
 ```

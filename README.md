@@ -42,7 +42,7 @@ Export your XXYY API Key before use:
 export XXYY_API_KEY=xxyy_ak_your_key_here
 ```
 
-Get an API Key at [xxyy.io](https://www.xxyy.io) (Settings > API Keys).
+Get an API Key at [xxyy.io](https://www.xxyy.io): register and log in, click the 9-dot grid icon in the top toolbar to open the API Key management page, then generate a new API Key.
 
 Optionally set a custom base URL:
 
