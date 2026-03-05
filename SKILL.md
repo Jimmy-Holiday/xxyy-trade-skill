@@ -45,19 +45,24 @@ All requests require header: `Authorization: Bearer $XXYY_API_KEY`
   "tokenAddress": "<token_contract>",
   "isBuy": true,
   "amount": 0.1,
-  "slippage": 20,
-  "tip": 0.001
+  "tip": 0.001,
+  "slippage": 20
 }
 ```
 
-Parameters:
-- `chain` -- `sol` / `eth` / `bsc` / `base`
-- `walletAddress` -- User's wallet address on XXYY platform (the address user can operate on xxyy.io). Must match the selected chain.
-- `tokenAddress` -- Token contract address to buy
-- `amount` -- Amount in native currency (SOL/ETH/BNB)
-- `slippage` -- Slippage tolerance %, default 20
-- `model` -- 1=anti-sandwich (default), 0=normal
-- `tip` -- Jito tip, SOL chain only, default 0.001
+#### Buy Parameters
+
+| Param | Required | Type | Valid values | Description |
+|-------|----------|------|-------------|-------------|
+| `chain` | YES | string | `sol` / `eth` / `bsc` / `base` | Only these 4 values accepted |
+| `walletAddress` | YES | string | SOL: Base58 32-44 chars; EVM: 0x+40hex | Wallet address on XXYY platform, must match chain |
+| `tokenAddress` | YES | string | Valid contract address | Token contract address to buy |
+| `isBuy` | YES | boolean | `true` | Must be true for buy |
+| `amount` | YES | number | > 0 | Amount in native currency (SOL/ETH/BNB) |
+| `tip` | YES | number | >= 0 | Priority fee for all chains. If not provided, falls back to priorityFee |
+| `slippage` | NO | number | 0-100 | Slippage tolerance %, default 20 |
+| `model` | NO | number | 1 or 2 | 1=anti-sandwich (default), 2=fast mode |
+| `priorityFee` | NO | number | >= 0 | Solana chain only. Extra priority fee in addition to tip |
 
 ### Sell Token
 `POST ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/swap`
@@ -68,11 +73,29 @@ Parameters:
   "walletAddress": "<user_wallet>",
   "tokenAddress": "<token_contract>",
   "isBuy": false,
-  "amount": 50
+  "amount": 50,
+  "tip": 0.001
 }
 ```
 
-- `amount` -- Sell percentage (0-100). Example: 50 = sell 50% of holdings
+#### Sell Parameters
+
+| Param | Required | Type | Valid values | Description |
+|-------|----------|------|-------------|-------------|
+| `chain` | YES | string | `sol` / `eth` / `bsc` / `base` | Only these 4 values accepted |
+| `walletAddress` | YES | string | SOL: Base58 32-44 chars; EVM: 0x+40hex | Wallet address on XXYY platform, must match chain |
+| `tokenAddress` | YES | string | Valid contract address | Token contract address to sell |
+| `isBuy` | YES | boolean | `false` | Must be false for sell |
+| `amount` | YES | number | 1-100 | Sell percentage. Example: 50 = sell 50% of holdings |
+| `tip` | YES | number | >= 0 | Priority fee for all chains. If not provided, falls back to priorityFee |
+| `slippage` | NO | number | 0-100 | Slippage tolerance %, default 20 |
+| `model` | NO | number | 1 or 2 | 1=anti-sandwich (default), 2=fast mode |
+| `priorityFee` | NO | number | >= 0 | Solana chain only. Extra priority fee in addition to tip |
+
+### tip / priorityFee Rules
+
+- `tip` (required) -- Universal priority fee for ALL chains. EVM chains (eth/bsc/base) use tip as the priority fee. If tip is not provided, the API falls back to priorityFee.
+- `priorityFee` (optional) -- Only effective on Solana chain. Solana supports both tip and priorityFee simultaneously.
 
 ### Query Trade
 `GET ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/trade?txId=<tx_id>`
@@ -92,6 +115,16 @@ Returns "pong" if API key is valid.
 4. **Show transaction link** -- Always display the block explorer URL with the txId
 5. **Never retry** failed swap requests -- show the error to user instead
 6. **Chain-wallet validation** -- walletAddress must match the selected chain. A Solana wallet cannot be used for BSC/ETH/Base trades and vice versa. If the user provides a mismatched wallet/chain combination, warn them and ask to correct before proceeding.
+7. **Strict parameter validation** -- Before calling the API, validate EVERY field:
+   - All required parameters must be present and have legal values
+   - `chain` must be one of `sol`/`eth`/`bsc`/`base`
+   - `isBuy` must be boolean `true` or `false`
+   - `amount` for buy: must be > 0; for sell: must be 1-100
+   - `tip` must be provided and >= 0
+   - `model` if provided must be 1 or 2
+   - `priorityFee` if provided only applies to Solana chain
+   - **Do NOT send any field names outside the parameter tables above**
+   - If any validation fails, refuse to send the request and ask the user to correct
 
 ## Wallet Address Formats
 
@@ -120,7 +153,7 @@ Returns "pong" if API key is valid.
 curl -s -X POST "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/swap" \
   -H "Authorization: Bearer $XXYY_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"chain":"sol","walletAddress":"...","tokenAddress":"...","isBuy":true,"amount":0.1}'
+  -d '{"chain":"sol","walletAddress":"...","tokenAddress":"...","isBuy":true,"amount":0.1,"tip":0.001}'
 
 # Query
 curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/trade?txId=..." \
