@@ -6,9 +6,17 @@ Trade tokens on **Solana**, **Ethereum**, **BSC**, and **Base** chains via [XXYY
 
 ### Claude Code
 
+**Step 1** — Add the marketplace source:
+
 ```bash
-/plugin add github:Jimmy-Holiday/xxyy-trade-skill
+/plugin marketplace add Jimmy-Holiday/xxyy-trade-skill
 ```
+
+**Step 2** — Install the plugin:
+
+Open `/plugin` → switch to **Marketplaces** tab → select **xxyy-trade-skill** → **Browse plugins** → install **xxyy-trade**.
+
+> **Troubleshooting:** If the marketplace doesn't appear in the Marketplaces tab after Step 1 succeeds, exit the `/plugin` UI and re-open it.
 
 Or manually: copy `skills/xxyy-trade/` into your project's `.claude/skills/` directory.
 

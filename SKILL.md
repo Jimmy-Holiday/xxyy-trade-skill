@@ -52,7 +52,7 @@ All requests require header: `Authorization: Bearer $XXYY_API_KEY`
 
 Parameters:
 - `chain` -- `sol` / `eth` / `bsc` / `base`
-- `walletAddress` -- User's wallet address registered on XXYY
+- `walletAddress` -- User's wallet address on XXYY platform (the address user can operate on xxyy.io). Must match the selected chain.
 - `tokenAddress` -- Token contract address to buy
 - `amount` -- Amount in native currency (SOL/ETH/BNB)
 - `slippage` -- Slippage tolerance %, default 20
@@ -91,6 +91,14 @@ Returns "pong" if API key is valid.
 3. **Poll trade result** -- After swap submission, query trade status up to 3 times with 5s intervals
 4. **Show transaction link** -- Always display the block explorer URL with the txId
 5. **Never retry** failed swap requests -- show the error to user instead
+6. **Chain-wallet validation** -- walletAddress must match the selected chain. A Solana wallet cannot be used for BSC/ETH/Base trades and vice versa. If the user provides a mismatched wallet/chain combination, warn them and ask to correct before proceeding.
+
+## Wallet Address Formats
+
+| Chain | Format | Example pattern |
+|-------|--------|-----------------|
+| SOL | Base58, 32-44 characters | `7xKX...` |
+| ETH / BSC / Base | 0x + 40 hex characters | `0x1a2B...` |
 
 ## Block Explorer URLs
 - SOL: `https://solscan.io/tx/{txId}`
