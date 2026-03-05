@@ -59,7 +59,7 @@ All requests require header: `Authorization: Bearer $XXYY_API_KEY`
 | `tokenAddress` | YES | string | Valid contract address | Token contract address to buy |
 | `isBuy` | YES | boolean | `true` | Must be true for buy |
 | `amount` | YES | number | > 0 | Amount in native currency (SOL/ETH/BNB) |
-| `tip` | YES | number | >= 0 | Priority fee for all chains. If not provided, falls back to priorityFee |
+| `tip` | YES | number | SOL: 0.001-0.1 (unit: SOL); EVM: 0.1-100 (unit: Gwei) | Priority fee for all chains. If not provided, falls back to priorityFee |
 | `slippage` | NO | number | 0-100 | Slippage tolerance %, default 20 |
 | `model` | NO | number | 1 or 2 | 1=anti-sandwich (default), 2=fast mode |
 | `priorityFee` | NO | number | >= 0 | Solana chain only. Extra priority fee in addition to tip |
@@ -87,7 +87,7 @@ All requests require header: `Authorization: Bearer $XXYY_API_KEY`
 | `tokenAddress` | YES | string | Valid contract address | Token contract address to sell |
 | `isBuy` | YES | boolean | `false` | Must be false for sell |
 | `amount` | YES | number | 1-100 | Sell percentage. Example: 50 = sell 50% of holdings |
-| `tip` | YES | number | >= 0 | Priority fee for all chains. If not provided, falls back to priorityFee |
+| `tip` | YES | number | SOL: 0.001-0.1 (unit: SOL); EVM: 0.1-100 (unit: Gwei) | Priority fee for all chains. If not provided, falls back to priorityFee |
 | `slippage` | NO | number | 0-100 | Slippage tolerance %, default 20 |
 | `model` | NO | number | 1 or 2 | 1=anti-sandwich (default), 2=fast mode |
 | `priorityFee` | NO | number | >= 0 | Solana chain only. Extra priority fee in addition to tip |
@@ -95,6 +95,8 @@ All requests require header: `Authorization: Bearer $XXYY_API_KEY`
 ### tip / priorityFee Rules
 
 - `tip` (required) -- Universal priority fee for ALL chains. EVM chains (eth/bsc/base) use tip as the priority fee. If tip is not provided, the API falls back to priorityFee.
+  - SOL chain: unit is SOL (1 = 1 SOL, very expensive). Recommended range: 0.001 - 0.1
+  - EVM chains (eth/bsc/base): unit is Gwei. Recommended range: 0.1 - 100
 - `priorityFee` (optional) -- Only effective on Solana chain. Solana supports both tip and priorityFee simultaneously.
 
 ### Query Trade
@@ -120,7 +122,7 @@ Returns "pong" if API key is valid.
    - `chain` must be one of `sol`/`eth`/`bsc`/`base`
    - `isBuy` must be boolean `true` or `false`
    - `amount` for buy: must be > 0; for sell: must be 1-100
-   - `tip` must be provided and >= 0
+   - `tip` must be provided; SOL chain: 0.001-0.1 (unit: SOL); EVM chains: 0.1-100 (unit: Gwei). **If tip is outside the recommended range, must warn the user about potentially high cost and require explicit confirmation before proceeding**
    - `model` if provided must be 1 or 2
    - `priorityFee` if provided only applies to Solana chain
    - **Do NOT send any field names outside the parameter tables above**
