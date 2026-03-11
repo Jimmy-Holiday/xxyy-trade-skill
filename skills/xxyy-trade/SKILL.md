@@ -3,16 +3,17 @@ name: xxyy-trade
 description: >-
   This skill should be used when the user asks to "buy token", "sell token",
   "swap token", "trade crypto", "check trade status", "query transaction",
-  or mentions trading on Solana/ETH/BSC/Base chains via XXYY.
-  Enables on-chain token trading through the XXYY Open API.
-version: 1.0.0
+  "scan tokens", "feed", "monitor chain", "query token", "token details",
+  "check token safety", or mentions trading on Solana/ETH/BSC/Base chains via XXYY.
+  Enables on-chain token trading and data queries through the XXYY Open API.
+version: 1.1.0
 disabled-model-invocation: true
 allowed-tools: Bash, Read, AskUserQuestion
 ---
 
 # XXYY Trade
 
-On-chain token trading on Solana, Ethereum, BSC, and Base via XXYY Open API.
+On-chain token trading and data queries on Solana, Ethereum, BSC, and Base via XXYY Open API.
 
 ## Prerequisites
 
@@ -100,6 +101,155 @@ Response fields: txId, status (pending/success/failed), statusDesc, chain, token
 
 Returns "pong" if API key is valid.
 
+### Feed (Scan Tokens)
+`POST ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/feed/{type}?chain={chain}`
+
+Retrieve Meme token lists: newly launched, almost graduated, or graduated.
+
+#### Path & Query Parameters
+
+| Param | Required | Type | Valid values | Description |
+|-------|----------|------|-------------|-------------|
+| `type` | YES | path string | `NEW` / `ALMOST` / `COMPLETED` | NEW = newly launched, ALMOST = almost graduated, COMPLETED = graduated |
+| `chain` | NO | query string | `sol` / `bsc` | Only these 2 chains supported. Default `sol` |
+
+#### Body (Filter Parameters)
+
+All filters are optional. Range parameters use comma-separated string format `"min,max"`. Leave one side empty to set only min or max (e.g. `"100,"` = min 100, `",50"` = max 50).
+
+| Param | Type | Description | Example |
+|-------|------|-------------|---------|
+| `dex` | string[] | DEX platform filter | See DEX Values by Chain below |
+| `quoteTokens` | string[] | Quote token filter | See quoteTokens Values by Chain below |
+| `link` | string[] | Social media link filter | `["x","tg","web"]` |
+| `keywords` | string[] | Token name/symbol keyword match | `["pepe","doge"]` |
+| `ignoreWords` | string[] | Ignore keywords | `["scam"]` |
+| `mc` | string | Market cap range (USD) | `"10000,500000"` |
+| `liq` | string | Liquidity range (USD) | `"1000,"` |
+| `vol` | string | Trading volume range (USD) | `"5000,100000"` |
+| `holder` | string | Holder count range | `"50,"` |
+| `createTime` | string | Creation time range (minutes from now) | `"1,20"` |
+| `tradeCount` | string | Trade count range | `"100,"` |
+| `buyCount` | string | Buy count range | `"50,"` |
+| `sellCount` | string | Sell count range | `"10,"` |
+| `devBuy` | string | Dev buy amount range (native token) | `"0.001,"` |
+| `devSell` | string | Dev sell amount range (native token) | `"0.001,"` |
+| `devHp` | string | Dev holding % range | `",60"` |
+| `topHp` | string | Top10 holding % range | `",60"` |
+| `insiderHp` | string | Insider holding % range | `",50"` |
+| `bundleHp` | string | Bundle holding % range | `",60"` |
+| `newWalletHp` | string | New wallet holding % range | `",30"` |
+| `progress` | string | Graduation progress % range (NEW/ALMOST only) | `"1,90"` |
+| `snipers` | string | Sniper count range | `",5"` |
+| `xnameCount` | string | Twitter rename count range | `",3"` |
+| `tagHolder` | string | Watched wallet buy count range | `"1,2"` |
+| `kol` | string | KOL buy count range | `"1,2"` |
+| `dexPay` | int | DexScreener paid, `1` = filter paid only | `1` |
+| `oneLink` | int | At least one social link, `1` = enabled | `1` |
+| `live` | int | Currently live streaming, `1` = filter live | `1` |
+
+#### DEX Values by Chain
+
+- **SOL**: `pump`, `pumpmayhem`, `bonk`, `heaven`, `believe`, `daosfun`, `launchlab`, `mdbc`, `jupstudio`, `mdbcbags`, `trends`, `moonshotn`, `boop`, `moon`, `time`
+- **BSC**: `four`, `four_agent`, `bnonly`, `flap`
+
+#### quoteTokens Values by Chain
+
+- **SOL**: `sol`, `usdc`, `usd1`
+- **BSC**: `bnb`, `usdt`, `usdc`, `usd1`, `aster`, `u`
+
+#### Feed Response
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "items": [
+      {
+        "tokenAddress": "...",
+        "symbol": "TOKEN",
+        "name": "Token Name",
+        "createTime": 1773140232851,
+        "dexName": "PUMPFUN",
+        "launchPlatform": { "name": "PUMPFUN", "progress": "12.89", "completed": false },
+        "holders": 3,
+        "priceUSD": 0.000003046,
+        "marketCapUSD": 3046.80,
+        "devHoldPercent": 12.48,
+        "hasLink": false,
+        "snipers": 0,
+        "quoteToken": "sol"
+      }
+    ]
+  },
+  "success": true
+}
+```
+
+Key response fields: `tokenAddress`, `symbol`, `name`, `createTime`, `dexName`, `launchPlatform` (name/progress/completed), `holders`, `priceUSD`, `marketCapUSD`, `devHoldPercent`, `hasLink`, `snipers`, `volume`, `tradeCount`, `buyCount`, `sellCount`, `topHolderPercent`, `insiderHp`, `bundleHp`
+
+### Token Query
+`GET ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/query?ca={contract_address}&chain={chain}`
+
+Query token details: price, security checks, tax rates, holder distribution, etc.
+
+#### Token Query Parameters
+
+| Param | Required | Type | Valid values | Description |
+|-------|----------|------|-------------|-------------|
+| `ca` | YES | string | Contract address | Token contract address |
+| `chain` | NO | string | `sol` / `eth` / `bsc` / `base` | Default `sol`. All 4 chains supported |
+
+#### Token Query Response
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "chainId": "bsc",
+    "tokenAddress": "0x...",
+    "baseSymbol": "TOKEN",
+    "tradeInfo": {
+      "marketCapUsd": 15464629.87,
+      "price": 0.01546,
+      "holder": 7596,
+      "hourTradeNum": 20611,
+      "hourTradeVolume": 2564705.05
+    },
+    "pairInfo": {
+      "pairAddress": "0x...",
+      "pair": "TOKEN - WBNB",
+      "liquidateUsd": 581750.57,
+      "createTime": 1772182240000
+    },
+    "securityInfo": {
+      "honeyPot": false,
+      "openSource": true,
+      "noOwner": true,
+      "locked": true
+    },
+    "taxInfo": { "buy": "0", "sell": "0" },
+    "linkInfo": { "tg": "", "x": "", "web": "" },
+    "dev": { "address": "0x...", "pct": 0.0 },
+    "topHolderPct": 25.14,
+    "topHolderList": [
+      { "address": "0x...", "balance": 98665702.34, "pct": 9.86 }
+    ]
+  },
+  "success": true
+}
+```
+
+Response groups:
+- **tradeInfo**: marketCapUsd, price, holder, hourTradeNum, hourTradeVolume
+- **pairInfo**: pairAddress, pair, liquidateUsd, createTime
+- **securityInfo**: honeyPot, openSource, noOwner, locked
+- **taxInfo**: buy, sell (percentage strings)
+- **dev**: address, pct
+- **topHolderPct** and **topHolderList**: top 10 holder distribution
+
 ## Execution Rules
 
 1. **Always confirm before trading** -- Ask user to confirm: chain, token address, amount/percentage, buy or sell
@@ -119,6 +269,31 @@ Returns "pong" if API key is valid.
    - **Do NOT send any field names outside the parameter tables above**
    - If any validation fails, refuse to send the request and ask the user to correct
 
+## Feed Rules
+
+1. **type validation** -- Only accept `NEW`, `ALMOST`, `COMPLETED` (uppercase). Reject any other value.
+2. **chain validation** -- Feed only supports `sol` and `bsc`. If user specifies `eth` or `base`, reject and inform them that Feed scanning is only available on Solana and BSC chains.
+3. **Single query mode (default)** -- Call the Feed API once, format and display key info for each token: symbol, priceUSD, marketCapUSD, holders, devHoldPercent, launchPlatform (name + progress).
+4. **Continuous monitor mode** -- Activate only when user explicitly says "持续监控", "monitor", or "watch":
+   - Use a Bash polling loop, calling Feed API every 5 seconds
+   - Deduplicate by `tokenAddress` — only display newly appeared tokens
+   - Loop limit: 480 seconds (8 minutes). Set Bash timeout to 540000ms
+   - After loop ends, use AskUserQuestion to ask: continue monitoring / view token details / buy a token / stop
+   - When continuing, preserve the seen `tokenAddress` set to avoid repeats
+5. **Filter guidance** -- Before querying, optionally ask user about filter preferences (market cap range, liquidity, holder count, etc.). If not asked, use no filters (return all).
+6. **No auto-trading** -- Feed scanning is for observation only. NEVER automatically buy or sell based on scan results.
+7. **Error handling** -- See Error Codes table. For data query APIs: `code == 200` with `success == true` means success; `code == 300` is server error (inform user to retry later); `code == 8060/8061` means stop immediately; `code == 8062` means wait 2 seconds and retry.
+
+## Token Query Rules
+
+1. **ca required** -- Contract address (`ca`) must be provided. If missing, ask user for it.
+2. **chain validation** -- Supports all 4 chains: `sol`, `eth`, `bsc`, `base`. Default `sol`.
+3. **HoneyPot warning** -- If `securityInfo.honeyPot == true`, display a **prominent warning** that this token is a honeypot and trading it is extremely risky.
+4. **High tax alert** -- If `taxInfo.buy` or `taxInfo.sell` > 5%, warn user about high tax rates.
+5. **Display format** -- Present results in groups: Trade Info → Security Check → Tax Rates → Holder Distribution → Social Links.
+6. **Trade follow-up** -- After displaying query results, optionally ask user if they want to buy this token, linking to the Buy Token flow.
+7. **Error handling** -- Same as Feed Rules (see Error Codes table).
+
 ## Wallet Address Formats
 
 | Chain | Format | Example pattern |
@@ -133,11 +308,14 @@ Returns "pong" if API key is valid.
 - BASE: `https://basescan.org/tx/{txId}`
 
 ## Error Codes
-| Code | Meaning |
-|------|---------|
-| 8060 | API Key invalid |
-| 8061 | API Key disabled |
-| 8062 | Rate limited (retry after 1s) |
+
+| Code | Meaning | Scope |
+|------|---------|-------|
+| 200 | Success | Data query APIs (Feed, Token Query) |
+| 300 | Server error — inform user to retry later | Data query APIs (Feed, Token Query) |
+| 8060 | API Key invalid | All APIs |
+| 8061 | API Key disabled | All APIs |
+| 8062 | Rate limited | All APIs — data query: retry after 2s; trade: retry after 1s (except swap, see Execution Rules #5) |
 
 ## Example curl
 
@@ -148,7 +326,17 @@ curl -s -X POST "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/sw
   -H "Content-Type: application/json" \
   -d '{"chain":"sol","walletAddress":"...","tokenAddress":"...","isBuy":true,"amount":0.1,"tip":0.001}'
 
-# Query
+# Query Trade
 curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/trade?txId=..." \
+  -H "Authorization: Bearer $XXYY_API_KEY"
+
+# Feed - Scan newly launched tokens on SOL (with filters)
+curl -s -X POST "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/feed/NEW?chain=sol" \
+  -H "Authorization: Bearer $XXYY_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"mc":"10000,500000","holder":"50,","insiderHp":",50"}'
+
+# Token Query
+curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/query?ca=TOKEN_ADDRESS&chain=sol" \
   -H "Authorization: Bearer $XXYY_API_KEY"
 ```

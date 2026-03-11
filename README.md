@@ -58,6 +58,10 @@ Once installed, simply tell Claude what you want to trade:
 - `"sell 50% of <token_address> on BSC"`
 - `"check trade status <txId>"`
 - `"ping xxyy api"`
+- `"scan new tokens on solana"`
+- `"show almost-graduated tokens on BSC with market cap > 50000"`
+- `"query token details for 0x1234..."`
+- `"monitor SOL for new tokens, min holders 50"`
 
 The skill will confirm trade details with you before executing.
 
