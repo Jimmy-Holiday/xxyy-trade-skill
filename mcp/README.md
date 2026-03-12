@@ -8,6 +8,9 @@ Supports **Solana**, **Ethereum**, **BSC**, and **Base** chains.
 
 **English** | [中文](docs/README_ZH.md)
 
+> [!CAUTION]
+> **Your API Key = Your Wallet.** The XXYY API Key can execute real on-chain trades using your wallet balance. If it leaks, anyone can buy/sell tokens with your funds. **Never share it, never commit it to git, never paste it in public channels.** If you suspect a leak, regenerate the key immediately at [xxyy.io](https://xxyy.io).
+
 ## Tools
 
 | Tool | Description |
@@ -203,8 +206,8 @@ pong — API Key is valid.
 
 ## Security Notes
 
+- **API Key = Wallet access** — Your XXYY API Key can execute real on-chain trades using your wallet balance. If it leaks, anyone can buy/sell tokens with your funds. Never share it, never commit it to version control, never paste it in public channels. If you suspect a leak, regenerate the key immediately at https://xxyy.io.
 - **Custodial model** — XXYY executes trades using your wallet balance. No private keys or wallet signing needed.
-- **API Key sensitivity** — The key can execute real on-chain trades. Treat it as highly sensitive. Never commit it to version control. If you suspect a leak, regenerate the key immediately at https://xxyy.io.
 - **No read-only mode** — The same key is used for both data queries and trading.
 - **No automatic status polling** — After `buy_token` / `sell_token` submits an order, the server returns the transaction ID but does NOT automatically poll for results. Use `query_trade` to check the transaction status manually.
 

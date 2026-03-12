@@ -6,6 +6,9 @@
 
 支持 **Claude Code Skill**、**OpenClaw** 和 **MCP Server**（适用于 Claude Desktop、Cursor、Windsurf、Cline 等）。
 
+> [!CAUTION]
+> **你的 API Key = 你的钱包。** XXYY API Key 可以直接使用你的钱包余额执行真实链上交易。一旦泄漏，任何人都可以用你的资金买卖代币。**绝不要分享、绝不要提交到 git、绝不要粘贴到公开渠道。** 如果怀疑泄漏，请立即在 [xxyy.io](https://www.xxyy.io) 重新生成 Key。
+
 ## 安装
 
 ### MCP Server（Claude Desktop / Cursor / Windsurf / Cline / ...）

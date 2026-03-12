@@ -6,6 +6,9 @@ Trade tokens on **Solana**, **Ethereum**, **BSC**, and **Base** chains via [XXYY
 
 Supports **Claude Code Skill**, **OpenClaw**, and **MCP Server** (for Claude Desktop, Cursor, Windsurf, Cline, and more).
 
+> [!CAUTION]
+> **Your API Key = Your Wallet.** The XXYY API Key can execute real on-chain trades using your wallet balance. If it leaks, anyone can buy/sell tokens with your funds. **Never share it, never commit it to git, never paste it in public channels.** If you suspect a leak, regenerate the key immediately at [xxyy.io](https://www.xxyy.io).
+
 ## Install
 
 ### MCP Server (Claude Desktop / Cursor / Windsurf / Cline / ...)
