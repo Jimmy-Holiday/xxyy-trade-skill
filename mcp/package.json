@@ -1,0 +1,47 @@
+{
+  "name": "xxyy-trade-mcp",
+  "version": "1.1.0",
+  "description": "MCP Server for on-chain token trading and data queries via XXYY Open API. Supports Solana, Ethereum, BSC, and Base.",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "xxyy",
+    "trading",
+    "solana",
+    "ethereum",
+    "bsc",
+    "base",
+    "defi",
+    "meme-token",
+    "crypto"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jimmy-Holiday/xxyy-trade-skill.git",
+    "directory": "mcp"
+  },
+  "homepage": "https://github.com/Jimmy-Holiday/xxyy-trade-skill/tree/main/mcp#readme",
+  "bugs": {
+    "url": "https://github.com/Jimmy-Holiday/xxyy-trade-skill/issues"
+  },
+  "license": "MIT",
+  "author": "Jimmy-Holiday",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
