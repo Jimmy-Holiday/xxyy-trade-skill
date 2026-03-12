@@ -58,16 +58,16 @@ claude mcp add xxyy-trade \
 
 ### OpenClaw
 
-在 OpenClaw 对话中粘贴仓库 URL：
+在 OpenClaw 对话中粘贴 Skill 链接：
 
 ```
-https://github.com/Jimmy-Holiday/xxyy-trade-skill
+https://clawhub.ai/Jimmy-Holiday/xxyy-trade-skill
 ```
 
 或通过 ClawHub CLI：
 
 ```bash
-clawhub install xxyy-trade
+clawhub install xxyy-trade-skill
 ```
 
 ## 配置

@@ -58,16 +58,16 @@ Or manually: copy `skills/xxyy-trade/` into your project's `.claude/skills/` dir
 
 ### OpenClaw
 
-Paste the repo URL in your OpenClaw conversation:
+Paste the skill URL in your OpenClaw conversation:
 
 ```
-https://github.com/Jimmy-Holiday/xxyy-trade-skill
+https://clawhub.ai/Jimmy-Holiday/xxyy-trade-skill
 ```
 
 Or via ClawHub CLI:
 
 ```bash
-clawhub install xxyy-trade
+clawhub install xxyy-trade-skill
 ```
 
 ## Setup
