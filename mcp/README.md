@@ -6,7 +6,7 @@ MCP Server for on-chain token trading and data queries via [XXYY](https://xxyy.i
 
 Supports **Solana**, **Ethereum**, **BSC**, and **Base** chains.
 
-[English](#) | [中文](https://github.com/Jimmy-Holiday/xxyy-trade-skill/blob/mcp/mcp/docs/README_ZH.md)
+**English** | [中文](docs/README_ZH.md)
 
 ## Tools
 

@@ -6,7 +6,7 @@
 
 支持 **Solana**、**Ethereum**、**BSC** 和 **Base** 链。
 
-[English](https://github.com/Jimmy-Holiday/xxyy-trade-skill/blob/mcp/mcp/README.md) | [中文](#)
+[English](../README.md) | **中文**
 
 ## 工具列表
 

@@ -1,5 +1,7 @@
 # XXYY Trade Skill
 
+**English** | [中文](docs/README_ZH.md)
+
 Trade tokens on **Solana**, **Ethereum**, **BSC**, and **Base** chains via [XXYY](https://www.xxyy.io) Open API -- using natural language.
 
 Supports **Claude Code Skill**, **OpenClaw**, and **MCP Server** (for Claude Desktop, Cursor, Windsurf, Cline, and more).
