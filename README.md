@@ -1,10 +1,44 @@
 # XXYY Trade Skill
 
-Trade tokens on **Solana**, **Ethereum**, **BSC**, and **Base** chains via [XXYY](https://www.xxyy.io) Open API -- using natural language. Supports both **Claude Code** and **OpenClaw**.
+Trade tokens on **Solana**, **Ethereum**, **BSC**, and **Base** chains via [XXYY](https://www.xxyy.io) Open API -- using natural language.
+
+Supports **Claude Code Skill**, **OpenClaw**, and **MCP Server** (for Claude Desktop, Cursor, Windsurf, Cline, and more).
 
 ## Install
 
-### Claude Code
+### MCP Server (Claude Desktop / Cursor / Windsurf / Cline / ...)
+
+Works with any MCP-compatible AI client. See **[mcp/README.md](mcp/README.md)** for full setup guide.
+
+```bash
+# 1. Clone & build
+git clone https://github.com/Jimmy-Holiday/xxyy-trade-skill.git
+cd xxyy-trade-skill/mcp
+npm install && npm run build
+
+# 2. Add to Claude Code (example)
+claude mcp add xxyy-trade \
+  -e XXYY_API_KEY=xxyy_ak_your_key_here \
+  -- node /path/to/xxyy-trade-skill/mcp/dist/index.js
+```
+
+For other clients (Claude Desktop, Cursor, Windsurf, Cline, Continue.dev, Zed, Cherry Studio), add to the corresponding JSON/YAML config:
+
+```json
+{
+  "mcpServers": {
+    "xxyy-trade": {
+      "command": "node",
+      "args": ["/path/to/xxyy-trade-skill/mcp/dist/index.js"],
+      "env": { "XXYY_API_KEY": "xxyy_ak_your_key_here" }
+    }
+  }
+}
+```
+
+> Full client-by-client examples: [mcp/README.md](mcp/README.md)
+
+### Claude Code Skill
 
 **Step 1** — Add the marketplace source:
 
