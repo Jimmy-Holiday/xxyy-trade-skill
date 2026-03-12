@@ -12,7 +12,6 @@ metadata:
     requires:
       env:
         - XXYY_API_KEY
-        - XXYY_API_BASE_URL
       bins:
         - curl
     primaryEnv: XXYY_API_KEY
@@ -33,6 +32,12 @@ Set environment variables before use:
 ## Authentication
 
 All requests require header: `Authorization: Bearer $XXYY_API_KEY`
+
+## Security Notes
+
+- **Custodial trading model** -- XXYY is a custodial trading platform. You only provide your wallet address (public key) and API Key. No private keys or wallet signing are needed -- XXYY executes trades on your behalf through their platform.
+- **API Key permissions** -- The XXYY API Key can execute on-chain buy/sell transactions using the linked wallet balance. Treat it as highly sensitive. Do not share it or expose it in logs. If you suspect a leak, regenerate the key immediately at https://xxyy.io.
+- **No read-only mode** -- The same API Key is used for both data queries (Feed, Token Query) and trading (Buy, Sell). There is currently no separate read-only key.
 
 ## API Reference
 
