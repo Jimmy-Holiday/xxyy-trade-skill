@@ -9,7 +9,7 @@ import { registerQueryTools } from "./tools/query.js";
 
 const server = new McpServer({
   name: "xxyy-trade",
-  version: "1.1.0",
+  version: "1.2.0",
 });
 
 registerSwapTools(server);
