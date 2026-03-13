@@ -34,6 +34,17 @@ All requests require header: `Authorization: Bearer $XXYY_API_KEY`
 
 ## API Reference
 
+> **STRICT: Only the endpoints listed below exist. Do NOT guess, infer, or construct any URL that is not explicitly documented here. If you need functionality not covered below, tell the user it is not supported.**
+>
+> Complete endpoint list:
+> - `POST /api/trade/open/api/swap` — Buy / Sell
+> - `GET  /api/trade/open/api/trade` — Query Trade
+> - `GET  /api/trade/open/api/ping` — Ping
+> - `POST /api/trade/open/api/feed/{type}` — Feed Scan
+> - `GET  /api/trade/open/api/query` — Token Query
+> - `GET  /api/trade/open/api/wallets` — List Wallets
+> - `GET  /api/trade/open/api/wallet/info` — Wallet Info
+
 ### Buy Token
 `POST ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/swap`
 
