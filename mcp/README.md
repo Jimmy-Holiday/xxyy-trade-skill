@@ -25,7 +25,7 @@ Supports **Solana**, **Ethereum**, **BSC**, and **Base** chains.
 ## Prerequisites
 
 - **Node.js >= 18** — download at [https://nodejs.org](https://nodejs.org) (LTS recommended). Verify: `node -v`
-- **XXYY API Key** — register at [https://xxyy.io](https://xxyy.io), click the 9-dot grid icon in the top toolbar, then generate a new API Key
+- **XXYY API Key** — get one at [xxyy.io/apikey](https://www.xxyy.io/apikey)
 
 ## Quick Install
 

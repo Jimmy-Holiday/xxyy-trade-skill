@@ -81,7 +81,7 @@ clawhub install xxyy-trade-skill
 export XXYY_API_KEY=xxyy_ak_your_key_here
 ```
 
-在 [xxyy.io](https://www.xxyy.io) 获取 API Key：注册并登录，点击顶部工具栏的九宫格图标进入 API Key 管理页面，然后生成新的 API Key。
+在 [xxyy.io/apikey](https://www.xxyy.io/apikey) 获取 API Key — 注册登录后直接生成。
 
 可选设置自定义 Base URL：
 
@@ -103,6 +103,8 @@ export XXYY_API_BASE_URL=https://www.xxyy.io
 - `"监控 SOL 上的新代币，最少 50 个持有人"`
 
 Skill 会在执行交易前与你确认交易细节。
+
+> 配置指南与使用经验：[配置指南](https://x.com/PepeBoost888/status/2032052111010382031)
 
 ## 支持的链
 

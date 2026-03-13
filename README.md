@@ -81,7 +81,7 @@ Export your XXYY API Key before use:
 export XXYY_API_KEY=xxyy_ak_your_key_here
 ```
 
-Get an API Key at [xxyy.io](https://www.xxyy.io): register and log in, click the 9-dot grid icon in the top toolbar to open the API Key management page, then generate a new API Key.
+Get an API Key at [xxyy.io/apikey](https://www.xxyy.io/apikey) — register, log in, and generate a new key.
 
 Optionally set a custom base URL:
 
@@ -103,6 +103,8 @@ Once installed, simply tell Claude what you want to trade:
 - `"monitor SOL for new tokens, min holders 50"`
 
 The skill will confirm trade details with you before executing.
+
+> Setup guide & tips: [Configuration Guide](https://x.com/PepeBoost888/status/2032052111010382031)
 
 ## Supported Chains
 

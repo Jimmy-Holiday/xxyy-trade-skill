@@ -25,7 +25,7 @@
 ## 前置条件
 
 - **Node.js >= 18** — 下载地址：[https://nodejs.org](https://nodejs.org)（推荐 LTS 版本）。验证：`node -v`
-- **XXYY API Key** — 在 [https://xxyy.io](https://xxyy.io) 注册登录后，点击顶部工具栏的九宫格图标，进入 API Key 管理页面生成新 Key
+- **XXYY API Key** — 在 [xxyy.io/apikey](https://www.xxyy.io/apikey) 获取
 
 ## 快速安装
 

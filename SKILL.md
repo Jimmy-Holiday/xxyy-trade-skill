@@ -7,16 +7,7 @@ description: >-
   "check token safety", or mentions trading on Solana/ETH/BSC/Base chains via XXYY.
   Enables on-chain token trading and data queries through the XXYY Open API.
 version: 1.1.0
-metadata:
-  openclaw:
-    requires:
-      env:
-        - XXYY_API_KEY
-      bins:
-        - curl
-    primaryEnv: XXYY_API_KEY
-    emoji: "\U0001F4B9"
-    homepage: https://www.xxyy.io
+metadata: { "openclaw": { "requires": { "env": ["XXYY_API_KEY"], "bins": ["curl"] }, "primaryEnv": "XXYY_API_KEY", "emoji": "💹", "homepage": "https://www.xxyy.io" } }
 ---
 
 # XXYY Trade
@@ -26,7 +17,7 @@ On-chain token trading and data queries on Solana, Ethereum, BSC, and Base via X
 ## Prerequisites
 
 Set environment variables before use:
-- `XXYY_API_KEY` (required) -- Your XXYY Open API Key (format: `xxyy_ak_xxxx`). How to get one: visit https://xxyy.io, register and log in, click the 9-dot grid icon in the top toolbar to open the API Key management page, then generate a new API Key.
+- `XXYY_API_KEY` (required) -- Your XXYY Open API Key (format: `xxyy_ak_xxxx`). Get one at https://www.xxyy.io/apikey
 - `XXYY_API_BASE_URL` (optional) -- API base URL, defaults to `https://www.xxyy.io`
 
 ## Authentication
