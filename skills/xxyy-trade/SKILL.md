@@ -5,6 +5,8 @@ description: >-
   "swap token", "trade crypto", "check trade status", "query transaction",
   "scan tokens", "feed", "monitor chain", "query token", "token details",
   "check token safety", "list wallets", "show wallets", "my wallets",
+  "AI scan", "AI扫链", "auto scan", "smart scan", "tweet scan", "推文扫链",
+  "twitter scan", "onboarding", "get started",
   or mentions trading on Solana/ETH/BSC/Base chains via XXYY.
   Enables on-chain token trading and data queries through the XXYY Open API.
 version: 1.2.1
@@ -434,6 +436,172 @@ Response fields:
 5. **Default wallet memory** -- After user selects a wallet, remember it as the default for that chain in the current session. Use this default for subsequent trades on the same chain without asking again.
 6. **Single wallet query** -- When the user provides a specific wallet address and asks for its balance, use Wallet Info API instead of List Wallets. Also use Wallet Info to show balance before trade confirmation.
 7. **Error handling** -- Same as other data query APIs (see Error Codes table).
+
+## Onboarding Flow
+
+**Trigger**: Automatically execute once when the skill is first activated in a session. Run only once per session.
+
+### Detection Logic
+
+1. Check if `$XXYY_API_KEY` is set in the environment.
+2. **Case A — No API Key**: Display a setup guide:
+   - How to get a key: visit https://www.xxyy.io/apikey
+   - How to set it: `export XXYY_API_KEY=xxyy_ak_xxxx`
+   - Show the feature table (Trade, Feed, Token Query, Wallets) and available strategies list.
+   - Stop here until user sets the key.
+3. **Case B — API Key exists**: Silently call Ping API.
+   - **Ping success**: Silently fetch wallets for all 4 chains (`sol`, `eth`, `bsc`, `base`) via List Wallets API. For each chain, pick the index-0 wallet as the default; if no wallet exists, show "N/A". Display:
+     - Feature table (Trade, Feed, Token Query, Wallets)
+     - Default wallets table: Chain | Wallet Name | Address | Balance
+     - Available strategies list (Strategy 1/2/3 with trigger phrases)
+     - Tip: `修改默认钱包 {chain} {wallet name or address}` to change defaults
+   - **Ping failure (8060/8061)**: **Case C** — inform user that the API Key is invalid or disabled, guide them to regenerate at https://www.xxyy.io/apikey.
+
+### Change Default Wallet
+
+When user says "修改默认钱包 {chain} {wallet name or address}":
+- Match by wallet name (case-insensitive) or address against the List Wallets result for that chain.
+- If matched, update the session default and confirm.
+- If no match, show available wallets for that chain and ask user to pick.
+
+### Non-blocking
+
+If the user sends an action command (e.g., buy/sell/scan) before onboarding completes, silently finish the detection in the background and proceed to handle their command directly.
+
+## Strategy Rules (Common)
+
+These rules apply to all three strategies below.
+
+1. **Wallet prerequisite** — If no default wallet is set for the required chain, run the Onboarding wallet-fetch step first.
+2. **Confirmation table** — Before every trade, display a confirmation table with: chain, action (buy/sell), wallet (name + address + balance), token (symbol + address), amount, tip, slippage. Proceed only after explicit user confirmation.
+3. **Result display** — After trade completes, show: txId, status, block explorer link (see Block Explorer URLs).
+4. **Mutual exclusion** — Only one polling strategy (Strategy 2 or 3) can run at a time. Starting a new one stops the current one.
+5. **Stop command** — User says "stop" or "停止" → immediately terminate the active polling strategy.
+6. **No auto-trading** — Strategy 2 and 3 scanning only displays results. NEVER automatically submit a trade. User must explicitly choose to buy.
+7. **Amount modification** — User says "修改金额 {value}" → update the buy amount for the next trade (does not affect in-flight trades).
+8. **Default parameters** — SOL: slippage 20%, tip 0.001 SOL. EVM chains (eth/bsc/base): slippage 20%, tip 1 Gwei. Users can override.
+9. **Error handling** — 8060/8061: stop strategy immediately. 8062: wait 2s and retry. 300: notify user of server error.
+10. **Parameter validation** — All trades follow Execution Rules #8 (strict parameter validation).
+
+## Strategy 1: Direct Buy/Sell
+
+**Trigger**: User provides a token contract address with buy/sell intent (e.g., "买 0x... 0.1 BNB", "sell 50% of ...").
+
+### Flow
+
+1. **Parse intent**: Identify action (buy/sell), token address, chain, amount, wallet.
+2. **Chain auto-detect**: `0x` prefix → EVM chain. If the specific EVM chain (eth/bsc/base) cannot be determined, ask user. Base58 format → SOL.
+3. **Wallet selection**: Follow Execution Rules #2 (auto-query wallet logic).
+4. **Display confirmation table** (see Strategy Rules #2).
+5. **User confirms** → Call Swap API → Poll trade status (Execution Rules #4) → Display result (Strategy Rules #3).
+6. **On failure**: Do NOT retry. Show error to user (Execution Rules #6).
+
+## Strategy 2: AI Auto Scan
+
+**Trigger**: User says "AI扫链", "AI scan", "auto scan", "smart scan", or "开始AI扫链".
+
+### Setup
+
+1. Confirm default wallets exist for SOL and BSC (required chains for Feed). If missing, fetch via Onboarding.
+2. Confirm buy amount per chain. Defaults: 0.1 SOL / 0.001 BNB. User can customize.
+3. Display configuration summary: wallets, amounts, scan tiers.
+
+### Scan Tiers
+
+Three tiers run in parallel each polling round. These are pre-validated filter parameters; users can modify them.
+
+**Tier A — NEW** (freshly launched tokens):
+```json
+{"topHp":"22,40","snipers":",6","insiderHp":",8","holder":"10,","mc":"8000,","oneLink":1,"createTime":"1,70"}
+```
+Feed type: `NEW`
+
+**Tier B — ALMOST** (near graduation):
+```json
+{"createTime":"1,120","dexPay":1,"mc":"13000,"}
+```
+Feed type: `ALMOST`
+
+**Tier C — COMPLETED** (graduated tokens):
+```json
+{"createTime":"1,240","topHp":"18,","holder":"300,","mc":"20000,160000"}
+```
+Feed type: `COMPLETED`
+
+### Polling Logic
+
+- **Interval**: Every 5 minutes per round.
+- **Requests per round**: 3 tiers × 2 chains (sol + bsc) = up to 6 Feed API calls.
+- **Max duration**: 60 minutes. After 60 minutes, ask user whether to continue.
+- **Deduplication**: Track `tokenAddress` across all rounds and chains. Only display newly discovered tokens.
+
+### Display Format
+
+For each new token found, show:
+| Field | Source |
+|-------|--------|
+| Symbol | `symbol` |
+| Chain | request chain |
+| Price | `priceUSD` |
+| Market Cap | `marketCapUSD` |
+| Holders | `holders` |
+| Dev Hold % | `devHoldPercent` |
+| Platform + Progress | `launchPlatform.name` + `launchPlatform.progress` |
+| Matched Tier | A / B / C |
+
+### User Interaction
+
+After displaying new tokens, user can:
+- **Select a token** → Call Token Query API to show full details (security, tax, links, holders).
+- **Buy a token** → Switch to Strategy 1 flow with the selected token.
+- **Skip / continue** → Wait for next polling round.
+
+## Strategy 3: Tweet Scan
+
+**Trigger**: User says "推文扫链", "tweet scan", "twitter scan", or "开始推文扫链".
+
+### Default Monitored Accounts
+
+`@heyibinance`, `@cz_binance` — recommended defaults. User can modify before or during scanning.
+
+### Setup
+
+1. Confirm monitored Twitter account list.
+2. Confirm BSC wallet exists (Tweet Scan is BSC-only). If missing, fetch via Onboarding.
+3. Confirm buy amount. Default: 0.001 BNB.
+4. Display configuration summary: accounts, wallet, amount.
+5. **Fixed parameters** (not user-modifiable): tip = 5 Gwei, slippage = 50%, model = 1.
+
+### Polling Flow
+
+Every 5 seconds:
+
+1. Call `POST /feed/NEW?chain=bsc` with body `{"oneLink":1}` to get new BSC tokens with social links.
+2. Deduplicate by `tokenAddress` using `seen_token_addresses` set.
+3. For each new token where `hasLink == true`:
+   a. Call `GET /query?ca={tokenAddress}&chain=bsc` to fetch full token details including `linkInfo`.
+   b. Check if `linkInfo.x` contains any monitored account handle (case-insensitive substring match).
+   c. Also deduplicate by `linkInfo.x` URL using `seen_twitter_urls` set.
+4. **Match found** → Display token details + confirmation table. Wait for user response (buy / skip).
+5. **No match** → Skip silently, continue polling.
+
+### Duration
+
+- **Max duration**: 30 minutes. After 30 minutes, ask user whether to continue.
+- Use a Bash polling loop. Set Bash timeout to 1860000ms (31 minutes).
+
+### Account Management
+
+- "修改账号 @xxx" → Replace the entire monitored list with the new account. Takes effect next polling round.
+- "添加账号 @xxx" → Append to the monitored list. Takes effect next polling round.
+
+### Status Line
+
+Display a status line during scanning:
+```
+[HH:MM:SS] Scanning BSC... (watching: @heyibinance, @cz_binance) #N
+```
+Where `#N` is the count of tokens scanned so far.
 
 ## Wallet Address Formats
 
