@@ -91,8 +91,10 @@ export XXYY_API_BASE_URL=https://www.xxyy.io
 
 ## Usage
 
-Once installed, simply tell Claude what you want to trade:
+Once installed, simply tell Claude what you want to do:
 
+- `"show my wallets on SOL"`
+- `"check balance of <wallet_address>"`
 - `"buy 0.1 SOL of <token_address>"`
 - `"sell 50% of <token_address> on BSC"`
 - `"check trade status <txId>"`
@@ -102,7 +104,7 @@ Once installed, simply tell Claude what you want to trade:
 - `"query token details for 0x1234..."`
 - `"monitor SOL for new tokens, min holders 50"`
 
-The skill will confirm trade details with you before executing.
+The skill will auto-select a wallet and confirm trade details with you before executing.
 
 > Setup guide & tips: [Configuration Guide](https://x.com/PepeBoost888/status/2032052111010382031)
 

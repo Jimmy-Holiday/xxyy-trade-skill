@@ -21,6 +21,8 @@ Supports **Solana**, **Ethereum**, **BSC**, and **Base** chains.
 | `ping` | Verify API Key validity |
 | `feed_scan` | Scan Meme token lists (SOL/BSC only) |
 | `token_query` | Query token details, security checks, tax rates |
+| `list_wallets` | List user wallets with balances on a specific chain |
+| `wallet_info` | Query a single wallet's balance and token holdings |
 
 ## Prerequisites
 
@@ -167,8 +169,10 @@ After connecting, just tell your AI assistant:
 
 | You Say | It Does |
 |---------|---------|
-| "Buy 0.1 SOL of `<token_address>`" | Execute a buy order |
-| "Sell 50% of `<token_address>` on BSC" | Execute a sell order |
+| "Show my wallets on SOL" | List wallets with balances |
+| "Check balance of `<wallet_address>`" | Query single wallet details |
+| "Buy 0.1 SOL of `<token_address>`" | Auto-select wallet, confirm, then buy |
+| "Sell 50% of `<token_address>` on BSC" | Auto-select wallet, confirm, then sell |
 | "Check trade status `<txId>`" | Query transaction result |
 | "Scan new tokens on Solana" | Feed scan for new launches |
 | "Show graduated tokens on BSC with market cap > 50000" | Filtered feed scan |

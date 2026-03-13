@@ -4,9 +4,10 @@ description: >-
   This skill should be used when the user asks to "buy token", "sell token",
   "swap token", "trade crypto", "check trade status", "query transaction",
   "scan tokens", "feed", "monitor chain", "query token", "token details",
-  "check token safety", or mentions trading on Solana/ETH/BSC/Base chains via XXYY.
+  "check token safety", "list wallets", "show wallets", "my wallets",
+  or mentions trading on Solana/ETH/BSC/Base chains via XXYY.
   Enables on-chain token trading and data queries through the XXYY Open API.
-version: 1.2.0
+version: 1.2.1
 metadata: { "openclaw": { "requires": { "env": ["XXYY_API_KEY"], "bins": ["curl"] }, "primaryEnv": "XXYY_API_KEY", "emoji": "💹", "homepage": "https://www.xxyy.io" } }
 ---
 
@@ -255,15 +256,128 @@ Response groups:
 - **dev**: address, pct
 - **topHolderPct** and **topHolderList**: top 10 holder distribution
 
+### List Wallets
+`GET ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/wallets`
+
+Query the current user's wallet list (with balances) for a specific chain.
+
+#### Wallets Parameters
+
+| Param | Required | Type | Valid values | Description |
+|-------|----------|------|-------------|-------------|
+| `chain` | NO | string | `sol` / `eth` / `bsc` / `base` | Default `sol` |
+| `pageNum` | NO | int | >= 1 | Page number, default 1 |
+| `pageSize` | NO | int | 1-20 | Items per page, default 20 |
+| `tokenAddress` | NO | string | Contract address | Returns token holdings per wallet |
+
+#### Wallets Response
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "totalCount": 3,
+    "pageSize": 20,
+    "totalPage": 1,
+    "currPage": 1,
+    "list": [
+      {
+        "userId": 12345,
+        "chain": 1,
+        "name": "Wallet-1",
+        "address": "5xYz...abc",
+        "balance": 1.523456789,
+        "topUp": 1,
+        "tokenBalance": null,
+        "createTime": "2025-01-01 00:00:00",
+        "updateTime": "2025-06-01 12:00:00",
+        "isImport": false
+      }
+    ]
+  },
+  "success": true
+}
+```
+
+Response fields:
+- **totalCount**: Total wallet count
+- **list[].chain**: Chain code (1=SOL, 2=BSC, 3=ETH, 6=BASE)
+- **list[].name**: Wallet display name
+- **list[].address**: Wallet address
+- **list[].balance**: Native token balance
+- **list[].topUp**: 1=pinned, 0=normal
+- **list[].tokenBalance**: Token holdings (only present when `tokenAddress` is provided). Contains `amount`, `decimals`, `uiAmount`, `uiAmountString`
+- **list[].isImport**: Whether the wallet was imported
+
+#### Chain Codes
+
+| Code | Chain |
+|------|-------|
+| 1 | SOL |
+| 2 | BSC |
+| 3 | ETH |
+| 6 | BASE |
+
+### Wallet Info
+`GET ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/wallet/info`
+
+Query a single wallet's details (native balance + optional token balance).
+
+#### Wallet Info Parameters
+
+| Param | Required | Type | Valid values | Description |
+|-------|----------|------|-------------|-------------|
+| `walletAddress` | YES | string | Wallet address | EVM chains are case-insensitive |
+| `chain` | NO | string | `sol` / `eth` / `bsc` / `base` | Default `sol` |
+| `tokenAddress` | NO | string | Contract address | Returns token holdings for this token |
+
+#### Wallet Info Response
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "address": "5xY...abc",
+    "name": "MyWallet",
+    "chain": 1,
+    "isImport": false,
+    "topUp": 0,
+    "balance": 1.234567,
+    "tokenBalance": {
+      "amount": "1000000",
+      "uiAmount": 1.0,
+      "decimals": 6
+    }
+  },
+  "success": true
+}
+```
+
+Response fields:
+- **address**: Wallet address
+- **name**: Wallet display name
+- **chain**: Chain code (1=SOL, 2=BSC, 3=ETH, 6=BASE)
+- **balance**: Native token balance
+- **topUp**: 1=pinned, 0=normal
+- **isImport**: Whether the wallet was imported
+- **tokenBalance**: Only present when `tokenAddress` is provided. Contains `amount`, `uiAmount`, `decimals`
+
 ## Execution Rules
 
 1. **Always confirm before trading** -- Ask user to confirm: chain, token address, amount/percentage, buy or sell
-2. **Use Bash with curl** to call the API
-3. **Poll trade result** -- After swap submission, query trade status up to 3 times with 5s intervals
-4. **Show transaction link** -- Always display the block explorer URL with the txId
-5. **Never retry** failed swap requests -- show the error to user instead
-6. **Chain-wallet validation** -- walletAddress must match the selected chain. A Solana wallet cannot be used for BSC/ETH/Base trades and vice versa. If the user provides a mismatched wallet/chain combination, warn them and ask to correct before proceeding.
-7. **Strict parameter validation** -- Before calling the API, validate EVERY field:
+2. **Auto-query wallet** -- If the user does not provide a wallet address:
+   a. If there is a remembered default wallet for that chain, use it directly and show its current balance via Wallet Info API before confirming.
+   b. Otherwise, call List Wallets API. If only 1 wallet exists, auto-select it. If multiple, ask user to choose. If none, guide to create at https://www.xxyy.io/wallet/manager?chainId={chain}.
+   c. Remember the selected wallet as default for that chain.
+   d. If the user provides a wallet address, call Wallet Info API to verify it exists and show its balance before confirming the trade.
+3. **Use Bash with curl** to call the API
+4. **Poll trade result** -- After swap submission, query trade status up to 3 times with 5s intervals
+5. **Show transaction link** -- Always display the block explorer URL with the txId
+6. **Never retry** failed swap requests -- show the error to user instead
+7. **Chain-wallet validation** -- walletAddress must match the selected chain. A Solana wallet cannot be used for BSC/ETH/Base trades and vice versa. If the user provides a mismatched wallet/chain combination, warn them and ask to correct before proceeding.
+8. **Strict parameter validation** -- Before calling the API, validate EVERY field:
    - All required parameters must be present and have legal values
    - `chain` must be one of `sol`/`eth`/`bsc`/`base`
    - `isBuy` must be boolean `true` or `false`
@@ -298,6 +412,16 @@ Response groups:
 5. **Display format** -- Present results in groups: Trade Info → Security Check → Tax Rates → Holder Distribution → Social Links.
 6. **Trade follow-up** -- After displaying query results, optionally ask user if they want to buy this token, linking to the Buy Token flow.
 7. **Error handling** -- Same as Feed Rules (see Error Codes table).
+
+## Wallets Rules
+
+1. **chain validation** -- Supports all 4 chains. Default `sol`.
+2. **Display format** -- Show wallet name, address, native balance. Mark pinned wallets with ⭐.
+3. **Token holdings** -- If user asks about specific token holdings, pass `tokenAddress` to show per-wallet balance.
+4. **No wallets** -- If response returns empty list, guide user to create at: https://www.xxyy.io/wallet/manager?chainId={chain}
+5. **Default wallet memory** -- After user selects a wallet, remember it as the default for that chain in the current session. Use this default for subsequent trades on the same chain without asking again.
+6. **Single wallet query** -- When the user provides a specific wallet address and asks for its balance, use Wallet Info API instead of List Wallets. Also use Wallet Info to show balance before trade confirmation.
+7. **Error handling** -- Same as other data query APIs (see Error Codes table).
 
 ## Wallet Address Formats
 
@@ -343,5 +467,13 @@ curl -s -X POST "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/fe
 
 # Token Query
 curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/query?ca=TOKEN_ADDRESS&chain=sol" \
+  -H "Authorization: Bearer $XXYY_API_KEY"
+
+# List Wallets
+curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/wallets?chain=sol" \
+  -H "Authorization: Bearer $XXYY_API_KEY"
+
+# Wallet Info
+curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/wallet/info?walletAddress=YOUR_WALLET&chain=sol" \
   -H "Authorization: Bearer $XXYY_API_KEY"
 ```

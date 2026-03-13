@@ -93,6 +93,8 @@ export XXYY_API_BASE_URL=https://www.xxyy.io
 
 安装完成后，直接用自然语言告诉 Claude 你想做什么：
 
+- `"看看我 SOL 上的钱包"`
+- `"查一下 <钱包地址> 的余额"`
 - `"用 0.1 SOL 买 <代币地址>"`
 - `"在 BSC 上卖出 <代币地址> 的 50%"`
 - `"查一下交易状态 <txId>"`
@@ -102,7 +104,7 @@ export XXYY_API_BASE_URL=https://www.xxyy.io
 - `"查一下 0x1234... 的代币详情"`
 - `"监控 SOL 上的新代币，最少 50 个持有人"`
 
-Skill 会在执行交易前与你确认交易细节。
+Skill 会自动选择钱包，并在执行交易前与你确认交易细节。
 
 > 配置指南与使用经验：[配置指南](https://x.com/PepeBoost888/status/2032052111010382031)
 
