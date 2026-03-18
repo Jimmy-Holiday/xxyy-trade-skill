@@ -9,7 +9,7 @@ description: >-
   "twitter scan", "onboarding", "get started",
   or mentions trading on Solana/ETH/BSC/Base chains via XXYY.
   Enables on-chain token trading and data queries through the XXYY Open API.
-version: 1.2.1
+version: 1.2.2
 disabled-model-invocation: true
 allowed-tools: Bash, Read, AskUserQuestion
 ---
