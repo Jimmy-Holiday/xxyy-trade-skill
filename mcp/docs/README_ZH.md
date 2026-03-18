@@ -18,9 +18,11 @@
 | `buy_token` | 使用原生代币（SOL/ETH/BNB）买入代币 |
 | `sell_token` | 按百分比（1-100%）卖出代币 |
 | `query_trade` | 通过 txId 查询交易状态 |
+| `list_trades` | 查询钱包的成功交易记录 |
 | `ping` | 验证 API Key 是否有效 |
 | `feed_scan` | 扫描 Meme 代币列表（仅 SOL/BSC） |
 | `token_query` | 查询代币详情、安全检查、税率 |
+| `pnl_query` | 查询指定钱包-代币的盈亏（PNL） |
 | `list_wallets` | 查询用户钱包列表及余额 |
 | `wallet_info` | 查询单个钱包详情及代币持仓 |
 
@@ -177,6 +179,8 @@ XXYY_API_KEY=<your-key> node /path/to/xxyy-trade-skill/mcp/dist/index.js
 | "扫一下 Solana 上的新币" | Feed 扫描新上线代币 |
 | "BSC 上市值大于 5 万的已毕业代币" | 带筛选的 Feed 扫描 |
 | "查一下这个代币 `<合约地址>` 的详情" | 安全检查 + 代币信息 |
+| "看看我在 BSC 上 `<代币地址>` 的盈亏" | 查询代币 PNL 盈亏 |
+| "看看我 SOL 上的交易记录" | 分页查询成功交易记录 |
 | "Ping 一下 XXYY API" | 验证连通性 |
 
 ## 兼容性

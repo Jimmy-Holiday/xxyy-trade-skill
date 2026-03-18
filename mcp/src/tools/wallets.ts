@@ -2,7 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { getClient } from "../xxyy-client.js";
 import { textResult, errorResult } from "../result.js";
-import { VALID_CHAINS, validateWalletAddress, type Chain } from "../validators.js";
+import { VALID_CHAINS, NATIVE_TOKEN, validateWalletAddress, type Chain } from "../validators.js";
 
 interface TokenBalance {
   amount: string;
@@ -37,13 +37,6 @@ interface WalletsData {
 }
 
 type WalletInfoData = WalletBase & { chain: number };
-
-const NATIVE_TOKEN: Record<Chain, string> = {
-  sol: "SOL",
-  eth: "ETH",
-  bsc: "BNB",
-  base: "ETH",
-};
 
 function formatWalletName(w: WalletBase): string {
   const pinned = w.topUp === 1 ? "⭐ " : "";

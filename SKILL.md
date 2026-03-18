@@ -45,6 +45,8 @@ All requests require header: `Authorization: Bearer $XXYY_API_KEY`
 > - `GET  /api/trade/open/api/query` — Token Query
 > - `GET  /api/trade/open/api/wallets` — List Wallets
 > - `GET  /api/trade/open/api/wallet/info` — Wallet Info
+> - `GET  /api/trade/open/api/pnl` — PNL Query
+> - `GET  /api/trade/open/api/trades` — Trade History
 
 ### Buy Token
 `POST ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/swap`
@@ -114,6 +116,51 @@ All requests require header: `Authorization: Bearer $XXYY_API_KEY`
 `GET ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/trade?txId=<tx_id>`
 
 Response fields: txId, status (pending/success/failed), statusDesc, chain, tokenAddress, walletAddress, isBuy, baseAmount, quoteAmount
+
+### Trade History
+`GET ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/trades?walletAddress=<wallet>&chain=<chain>`
+
+Paginated query of successful trade records for a specific wallet. Only returns completed transactions, sorted by creation time (newest first).
+
+#### Trade History Parameters
+
+| Param | Required | Type | Valid values | Description |
+|-------|----------|------|-------------|-------------|
+| `walletAddress` | YES | string | Wallet address | Must belong to current API Key user |
+| `chain` | YES | string | `sol` / `eth` / `bsc` / `base` | Chain identifier (required) |
+| `tokenAddress` | NO | string | Contract address | Filter by specific token |
+| `pageNum` | NO | int | >= 1 | Page number, default 1 |
+| `pageSize` | NO | int | 1-20 | Items per page, default 20 |
+
+#### Trade History Response
+
+```json
+{
+  "code": 200,
+  "data": {
+    "pageNum": 1,
+    "pageSize": 10,
+    "total": 56,
+    "list": [
+      {
+        "txId": "5xYz...",
+        "status": 2,
+        "statusDesc": "success",
+        "chain": "sol",
+        "tokenAddress": "EPjF...",
+        "walletAddress": "5xYz...",
+        "isBuy": 1,
+        "baseAmount": 0.5,
+        "quoteAmount": 1000,
+        "createTime": "2026-03-18T10:00:00",
+        "updateTime": "2026-03-18T10:00:05"
+      }
+    ]
+  }
+}
+```
+
+Response fields: txId, status (fixed 2=success), statusDesc, chain, tokenAddress, walletAddress, isBuy (1=buy, 0=sell), baseAmount, quoteAmount, createTime, updateTime
 
 ### Ping
 `GET ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/ping`
@@ -376,6 +423,61 @@ Response fields:
 - **topUp**: 1=pinned, 0=normal
 - **isImport**: Whether the wallet was imported
 - **tokenBalance**: Only present when `tokenAddress` is provided. Contains `amount`, `uiAmount`, `decimals`
+
+### PNL Query
+`GET ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/pnl?walletAddress=<wallet>&tokenAddress=<token>&chain=<chain>`
+
+Query PNL (profit and loss) data for a specific wallet-token pair. Returns buy/sell totals, current holdings, and profit in both native currency and USD. Covers the last 30 days.
+
+#### PNL Query Parameters
+
+| Param | Required | Type | Valid values | Description |
+|-------|----------|------|-------------|-------------|
+| `walletAddress` | YES | string | Wallet address | Must belong to current API Key user |
+| `tokenAddress` | YES | string | Contract address | Token contract address |
+| `chain` | YES | string | `sol` / `eth` / `bsc` / `base` | Chain identifier (required) |
+
+#### PNL Query Response
+
+```json
+{
+  "code": 200,
+  "data": {
+    "wallet": "5xYz...",
+    "tokenMint": "EPjF...",
+    "balance": 1.5,
+    "buy": 2.0,
+    "sell": 0.8,
+    "hold": 1.2,
+    "pnl": 0.5,
+    "pnlusd": 75.0,
+    "holdTokenNum": 1000,
+    "holdTokenPercent": 0.05,
+    "lastTradeTime": 1710000000000,
+    "meta": {
+      "symbol": "TOKEN",
+      "dexId": "raydium",
+      "pairAddress": "xxx"
+    }
+  }
+}
+```
+
+Response fields:
+- **wallet**: Wallet address
+- **tokenMint**: Token contract address
+- **balance**: Native token balance (e.g. SOL)
+- **buy**: Total buy amount (native currency)
+- **sell**: Total sell amount (native currency)
+- **hold**: Current holding value (native currency)
+- **pnl**: Profit/loss (native currency)
+- **pnlusd**: Profit/loss (USD)
+- **holdTokenNum**: Current token holdings quantity
+- **holdTokenPercent**: Holdings as percentage of total supply
+- **lastTradeTime**: Last trade timestamp (milliseconds)
+- **meta.symbol**: Token symbol
+- **meta.dexId**: DEX identifier
+- **meta.pairAddress**: Trading pair address
 
 ## Execution Rules
 
@@ -654,5 +756,13 @@ curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/wallets?ch
 
 # Wallet Info
 curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/wallet/info?walletAddress=YOUR_WALLET&chain=sol" \
+  -H "Authorization: Bearer $XXYY_API_KEY"
+
+# PNL Query
+curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/pnl?walletAddress=YOUR_WALLET&tokenAddress=TOKEN_ADDRESS&chain=sol" \
+  -H "Authorization: Bearer $XXYY_API_KEY"
+
+# Trade History
+curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/trades?walletAddress=YOUR_WALLET&chain=sol&pageNum=1&pageSize=10" \
   -H "Authorization: Bearer $XXYY_API_KEY"
 ```

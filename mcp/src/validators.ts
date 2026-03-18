@@ -4,6 +4,13 @@ export const FEED_CHAINS = ["sol", "bsc"] as const;
 export type Chain = (typeof VALID_CHAINS)[number];
 export type FeedChain = (typeof FEED_CHAINS)[number];
 
+export const NATIVE_TOKEN: Record<Chain, string> = {
+  sol: "SOL",
+  eth: "ETH",
+  bsc: "BNB",
+  base: "ETH",
+};
+
 const SOL_ADDRESS_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 const EVM_ADDRESS_RE = /^0x[0-9a-fA-F]{40}$/;
 

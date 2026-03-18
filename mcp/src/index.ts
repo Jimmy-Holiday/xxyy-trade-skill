@@ -7,6 +7,7 @@ import { registerTradeTools } from "./tools/trade.js";
 import { registerFeedTools } from "./tools/feed.js";
 import { registerQueryTools } from "./tools/query.js";
 import { registerWalletTools } from "./tools/wallets.js";
+import { registerPnlTools } from "./tools/pnl.js";
 
 const server = new McpServer({
   name: "xxyy-trade",
@@ -18,6 +19,7 @@ registerTradeTools(server);
 registerFeedTools(server);
 registerQueryTools(server);
 registerWalletTools(server);
+registerPnlTools(server);
 
 const transport = new StdioServerTransport();
 await server.connect(transport);

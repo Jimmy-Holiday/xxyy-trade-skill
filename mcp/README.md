@@ -18,9 +18,11 @@ Supports **Solana**, **Ethereum**, **BSC**, and **Base** chains.
 | `buy_token` | Buy a token with native currency (SOL/ETH/BNB) |
 | `sell_token` | Sell a token by percentage (1-100%) |
 | `query_trade` | Query transaction status by txId |
+| `list_trades` | Query successful trade history for a wallet |
 | `ping` | Verify API Key validity |
 | `feed_scan` | Scan Meme token lists (SOL/BSC only) |
 | `token_query` | Query token details, security checks, tax rates |
+| `pnl_query` | Query PNL (profit/loss) for a wallet-token pair |
 | `list_wallets` | List user wallets with balances on a specific chain |
 | `wallet_info` | Query a single wallet's balance and token holdings |
 
@@ -177,6 +179,8 @@ After connecting, just tell your AI assistant:
 | "Scan new tokens on Solana" | Feed scan for new launches |
 | "Show graduated tokens on BSC with market cap > 50000" | Filtered feed scan |
 | "Query token details for `<contract_address>`" | Security check + token info |
+| "Show my PNL for `<token_address>` on BSC" | Profit/loss summary for a token |
+| "Show my trade history on SOL" | Paginated list of successful trades |
 | "Ping XXYY API" | Verify API Key connectivity |
 
 ## Compatibility
