@@ -25,6 +25,7 @@
 | `pnl_query` | 查询指定钱包-代币的盈亏（PNL） |
 | `list_wallets` | 查询用户钱包列表及余额 |
 | `wallet_info` | 查询单个钱包详情及代币持仓 |
+| `get_ip` | 查询当前出口 IP，用于配置白名单 |
 
 ## 前置条件
 
@@ -182,6 +183,7 @@ XXYY_API_KEY=<your-key> node /path/to/xxyy-trade-skill/mcp/dist/index.js
 | "看看我在 BSC 上 `<代币地址>` 的盈亏" | 查询代币 PNL 盈亏 |
 | "看看我 SOL 上的交易记录" | 分页查询成功交易记录 |
 | "Ping 一下 XXYY API" | 验证连通性 |
+| "我的 IP 是什么？" | 查询出口 IP，用于配置白名单 |
 
 ## 兼容性
 
@@ -218,6 +220,7 @@ pong — API Key is valid.
 - **托管交易模式** — XXYY 使用你钱包余额执行交易，无需私钥或钱包签名。
 - **无只读模式** — 同一个 Key 同时用于数据查询和交易。
 - **不会自动轮询状态** — `buy_token` / `sell_token` 提交订单后只返回交易 ID，不会自动查询结果。需手动调用 `query_trade` 查看状态。
+- **IP 白名单（推荐）** — 为增强安全性，建议在 [xxyy.io/apikey](https://www.xxyy.io/apikey) 为 API Key 配置 IP 白名单。配置后，仅白名单中的 IP 可以调用 API。使用 `get_ip` 工具查询当前出口 IP 后再进行配置。
 
 ## 支持的链
 

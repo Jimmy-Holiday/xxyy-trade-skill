@@ -9,6 +9,7 @@ const ErrorCode = {
   API_KEY_INVALID: 8060,
   API_KEY_DISABLED: 8061,
   RATE_LIMITED: 8062,
+  IP_FORBIDDEN: 8063,
   SERVER_ERROR: 300,
 } as const;
 
@@ -89,6 +90,34 @@ export class XxyyClient {
     const res = await fetch(url, init);
 
     if (!res.ok) {
+      if (res.status === 403) {
+        try {
+          const body: unknown = await res.json();
+          if (
+            typeof body === "object" &&
+            body !== null &&
+            "code" in body &&
+            typeof (body as { code: unknown }).code === "number"
+          ) {
+            const code = (body as { code: number }).code;
+            if (code === ErrorCode.IP_FORBIDDEN) {
+              throw new XxyyApiError(
+                res.status,
+                "IP not in whitelist (HTTP 403). Your current IP is not allowed by API Key's whitelist. " +
+                  "Use get_ip to check your outbound IP, then update whitelist at https://www.xxyy.io/apikey",
+              );
+            }
+          }
+        } catch (e) {
+          if (e instanceof XxyyApiError) throw e;
+          // Failed to parse body — fall through to generic message
+        }
+        throw new XxyyApiError(
+          res.status,
+          "Authentication failed (HTTP 403). Check your XXYY_API_KEY. " +
+            "If the key is correct, your IP may not be in the whitelist — use get_ip to check your outbound IP, then update whitelist at https://www.xxyy.io/apikey",
+        );
+      }
       throw new XxyyApiError(
         res.status,
         formatHttpError(res.status, res.statusText),

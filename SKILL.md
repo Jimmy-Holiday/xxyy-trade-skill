@@ -7,9 +7,10 @@ description: >-
   "check token safety", "list wallets", "show wallets", "my wallets",
   "AI scan", "AI扫链", "auto scan", "smart scan", "tweet scan", "推文扫链",
   "twitter scan", "onboarding", "get started",
+  "check IP", "get IP", "IP whitelist", "查IP", "IP白名单",
   or mentions trading on Solana/ETH/BSC/Base chains via XXYY.
   Enables on-chain token trading and data queries through the XXYY Open API.
-version: 1.2.2
+version: 1.2.3
 metadata: { "openclaw": { "requires": { "env": ["XXYY_API_KEY"], "bins": ["curl"] }, "primaryEnv": "XXYY_API_KEY", "emoji": "💹", "homepage": "https://www.xxyy.io" } }
 ---
 
@@ -32,6 +33,7 @@ All requests require header: `Authorization: Bearer $XXYY_API_KEY`
 - **⚠️ API Key = Wallet access** -- Your XXYY API Key can execute real on-chain trades using your wallet balance. If it leaks, anyone can buy/sell tokens with your funds. Never share it, never commit it to version control, never expose it in logs or public channels. If you suspect a leak, regenerate the key immediately at https://xxyy.io.
 - **Custodial trading model** -- XXYY is a custodial trading platform. You only provide your wallet address (public key) and API Key. No private keys or wallet signing are needed -- XXYY executes trades on your behalf through their platform.
 - **No read-only mode** -- The same API Key is used for both data queries (Feed, Token Query) and trading (Buy, Sell). There is currently no separate read-only key.
+- **IP whitelist (recommended)** -- For extra security, configure an IP whitelist for your API Key at https://www.xxyy.io/apikey. Only whitelisted IPs can call the API. Use the `get_ip` tool to check your current outbound IP before setting up the whitelist.
 
 ## API Reference
 
@@ -47,6 +49,7 @@ All requests require header: `Authorization: Bearer $XXYY_API_KEY`
 > - `GET  /api/trade/open/api/wallet/info` — Wallet Info
 > - `GET  /api/trade/open/api/pnl` — PNL Query
 > - `GET  /api/trade/open/api/trades` — Trade History
+> - `GET  /api/trade/open/api/ip` — Get IP (exempt from IP whitelist)
 
 ### Buy Token
 `POST ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/swap`
@@ -479,6 +482,28 @@ Response fields:
 - **meta.dexId**: DEX identifier
 - **meta.pairAddress**: Trading pair address
 
+### Get IP
+`GET ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/ip`
+
+Get the current outbound IP address of this server. Use this to check which IP to add to your API Key's whitelist. **This endpoint is exempt from IP whitelist restrictions** — it will work even if your IP is not whitelisted.
+
+No parameters required.
+
+#### Get IP Response
+
+```json
+{
+  "code": 200,
+  "data": {
+    "ip": "203.0.113.42"
+  },
+  "success": true
+}
+```
+
+Response fields:
+- **ip**: Your current outbound IP address
+
 ## Execution Rules
 
 1. **Always confirm before trading** -- Ask user to confirm: chain, token address, amount/percentage, buy or sell
@@ -726,6 +751,7 @@ Where `#N` is the count of tokens scanned so far.
 | 8060 | API Key invalid | All APIs |
 | 8061 | API Key disabled | All APIs |
 | 8062 | Rate limited | All APIs — data query: retry after 2s; trade: retry after 1s (except swap, see Execution Rules #5) |
+| 8063 | IP not in whitelist — use `get_ip` to check current IP, update whitelist at https://www.xxyy.io/apikey | All APIs |
 
 ## Example curl
 
@@ -764,5 +790,9 @@ curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/pnl?wallet
 
 # Trade History
 curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/trades?walletAddress=YOUR_WALLET&chain=sol&pageNum=1&pageSize=10" \
+  -H "Authorization: Bearer $XXYY_API_KEY"
+
+# Get IP (exempt from IP whitelist)
+curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/ip" \
   -H "Authorization: Bearer $XXYY_API_KEY"
 ```

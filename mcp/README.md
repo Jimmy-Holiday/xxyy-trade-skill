@@ -25,6 +25,7 @@ Supports **Solana**, **Ethereum**, **BSC**, and **Base** chains.
 | `pnl_query` | Query PNL (profit/loss) for a wallet-token pair |
 | `list_wallets` | List user wallets with balances on a specific chain |
 | `wallet_info` | Query a single wallet's balance and token holdings |
+| `get_ip` | Get your outbound IP for whitelist configuration |
 
 ## Prerequisites
 
@@ -182,6 +183,7 @@ After connecting, just tell your AI assistant:
 | "Show my PNL for `<token_address>` on BSC" | Profit/loss summary for a token |
 | "Show my trade history on SOL" | Paginated list of successful trades |
 | "Ping XXYY API" | Verify API Key connectivity |
+| "What's my IP?" | Check outbound IP for whitelist setup |
 
 ## Compatibility
 
@@ -218,6 +220,7 @@ pong — API Key is valid.
 - **Custodial model** — XXYY executes trades using your wallet balance. No private keys or wallet signing needed.
 - **No read-only mode** — The same key is used for both data queries and trading.
 - **No automatic status polling** — After `buy_token` / `sell_token` submits an order, the server returns the transaction ID but does NOT automatically poll for results. Use `query_trade` to check the transaction status manually.
+- **IP whitelist (recommended)** — For extra security, configure an IP whitelist for your API Key at [xxyy.io/apikey](https://www.xxyy.io/apikey). Only whitelisted IPs will be allowed to call the API. Use the `get_ip` tool to check your current outbound IP before setting up the whitelist.
 
 ## Supported Chains
 
