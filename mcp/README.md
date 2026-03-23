@@ -28,6 +28,8 @@ Supports **Solana**, **Ethereum**, **BSC**, and **Base** chains.
 | `get_ip` | Get your outbound IP for whitelist configuration |
 | `kol_buy_list` | Get KOL (Key Opinion Leader) recent buy list |
 | `tag_holder_buy_list` | Get tag holder (Smart Money, Whale, etc.) recent buy list |
+| `label_list` | Get tokens with specific labels (e.g., AGENT_KOL), SOL only |
+| `signal_list` | Get AI trend signal tokens (e.g., open-ai-trending), SOL only |
 
 ## Prerequisites
 

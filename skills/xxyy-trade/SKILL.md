@@ -524,34 +524,55 @@ Get KOL (Key Opinion Leader) recent buy list. Shows tokens recently purchased by
 
 ```json
 {
-  "code": 0,
+  "code": 200,
   "msg": "success",
   "data": [
     {
-      "tokenAddress": "TokenMintAddress...",
-      "tokenName": "TOKEN",
-      "tokenSymbol": "TKN",
-      "kolAddress": "KolWalletAddress...",
-      "kolName": "KOL Name",
-      "buyAmount": "1.5",
-      "buyTime": 1711234567890,
-      "price": "0.00123",
-      "marketCap": "1234567.89"
+      "tokenMeta": {
+        "symbol": "TOKEN",
+        "dexId": "pump",
+        "dexIcon": "https://...",
+        "imageUrl": "https://...",
+        "pairAddress": "PairAddress...",
+        "mint": "TokenMintAddress..."
+      },
+      "priceNative": 0.0000001,
+      "priceUsd": 0.0000085,
+      "marketCap": 8500.0,
+      "priceChange24h": 15.0,
+      "walletBuyCnt": 2,
+      "lastTradeTime": 1711234567890,
+      "holder": 120,
+      "volumeNative": 5000.0,
+      "volumeUSD": 5000.0,
+      "walletBuyItemList": [
+        {
+          "wallet": "KolWalletAddress...",
+          "walletName": "KOL Name",
+          "walletBuyAmount": 1.5
+        }
+      ]
     }
   ]
 }
 ```
 
 Response fields:
-- **tokenAddress**: Token contract address
-- **tokenName**: Token name
-- **tokenSymbol**: Token symbol
-- **kolAddress**: KOL wallet address
-- **kolName**: KOL name
-- **buyAmount**: Buy amount (SOL/BNB)
-- **buyTime**: Buy timestamp (milliseconds)
-- **price**: Buy price
-- **marketCap**: Market cap
+- **tokenMeta.symbol**: Token symbol
+- **tokenMeta.mint**: Token contract address
+- **tokenMeta.dexId**: DEX identifier
+- **tokenMeta.pairAddress**: Trading pair address
+- **tokenMeta.imageUrl**: Token logo URL
+- **priceNative**: Price in native currency
+- **priceUsd**: Price in USD
+- **marketCap**: Market capitalization in USD
+- **priceChange24h**: 24-hour price change percentage
+- **walletBuyCnt**: Number of KOL wallets that bought
+- **lastTradeTime**: Last trade timestamp (milliseconds)
+- **holder**: Number of holders
+- **walletBuyItemList[].wallet**: KOL wallet address
+- **walletBuyItemList[].walletName**: KOL wallet name
+- **walletBuyItemList[].walletBuyAmount**: Buy amount in native currency
 
 ### Tag Holder Buy List
 `GET ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/tag-holder-buy-list?chain={chain}`
@@ -568,34 +589,55 @@ Get tag holder (Smart Money, Whale, etc.) recent buy list. Shows tokens recently
 
 ```json
 {
-  "code": 0,
+  "code": 200,
   "msg": "success",
   "data": [
     {
-      "tokenAddress": "TokenMintAddress...",
-      "tokenName": "TOKEN",
-      "tokenSymbol": "TKN",
-      "holderAddress": "HolderWalletAddress...",
-      "holderTag": "Smart Money",
-      "buyAmount": "2.5",
-      "buyTime": 1711234567890,
-      "price": "0.00456",
-      "marketCap": "2345678.90"
+      "tokenMeta": {
+        "symbol": "TOKEN",
+        "dexId": "pump",
+        "dexIcon": "https://...",
+        "imageUrl": "https://...",
+        "pairAddress": "PairAddress...",
+        "mint": "TokenMintAddress..."
+      },
+      "priceNative": 0.0000001,
+      "priceUsd": 0.0000085,
+      "marketCap": 8500.0,
+      "priceChange24h": -5.0,
+      "walletBuyCnt": 1,
+      "lastTradeTime": 1711234567890,
+      "holder": 250,
+      "volumeNative": 12000.0,
+      "volumeUSD": 12000.0,
+      "walletBuyItemList": [
+        {
+          "wallet": "HolderWalletAddress...",
+          "walletName": "Smart Money",
+          "walletBuyAmount": 2.5
+        }
+      ]
     }
   ]
 }
 ```
 
 Response fields:
-- **tokenAddress**: Token contract address
-- **tokenName**: Token name
-- **tokenSymbol**: Token symbol
-- **holderAddress**: Holder wallet address
-- **holderTag**: Holder tag (e.g., Smart Money, Whale)
-- **buyAmount**: Buy amount (SOL/BNB)
-- **buyTime**: Buy timestamp (milliseconds)
-- **price**: Buy price
-- **marketCap**: Market cap
+- **tokenMeta.symbol**: Token symbol
+- **tokenMeta.mint**: Token contract address
+- **tokenMeta.dexId**: DEX identifier
+- **tokenMeta.pairAddress**: Trading pair address
+- **tokenMeta.imageUrl**: Token logo URL
+- **priceNative**: Price in native currency
+- **priceUsd**: Price in USD
+- **marketCap**: Market capitalization in USD
+- **priceChange24h**: 24-hour price change percentage
+- **walletBuyCnt**: Number of tagged wallets that bought
+- **lastTradeTime**: Last trade timestamp (milliseconds)
+- **holder**: Number of holders
+- **walletBuyItemList[].wallet**: Holder wallet address
+- **walletBuyItemList[].walletName**: Holder wallet name / tag
+- **walletBuyItemList[].walletBuyAmount**: Buy amount in native currency
 
 ### Label List
 `GET ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/label-list?chain={chain}&labelType={labelType}`
@@ -998,4 +1040,14 @@ curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/kol-buy-li
 # Tag Holder Buy List
 curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/tag-holder-buy-list?chain=bsc" \
   -H "Authorization: Bearer $XXYY_API_KEY"
+
+# Label List (SOL only)
+curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/label-list?chain=sol&labelType=AGENT_KOL" \
+  -H "Authorization: Bearer $XXYY_API_KEY"
+
+# Signal List (SOL only)
+curl -s -X POST "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/signal-list?type=open-ai-trending&chain=sol" \
+  -H "Authorization: Bearer $XXYY_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{}'
 ```

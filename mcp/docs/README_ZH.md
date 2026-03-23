@@ -28,6 +28,8 @@
 | `get_ip` | 查询当前出口 IP，用于配置白名单 |
 | `kol_buy_list` | 获取 KOL（意见领袖）最近买入列表 |
 | `tag_holder_buy_list` | 获取标签持有者（Smart Money、巨鲸等）最近买入列表 |
+| `label_list` | 获取特定标签的代币列表（如 AGENT_KOL），仅支持 SOL |
+| `signal_list` | 获取 AI 趋势信号代币列表（如 open-ai-trending），仅支持 SOL |
 
 ## 前置条件
 

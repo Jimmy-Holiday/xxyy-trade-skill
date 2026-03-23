@@ -34,7 +34,7 @@ export async function fetchAndFormatTokenList(
         ? await client.get<TokenInfo[]>(url)
         : await client.post<TokenInfo[]>(url, body || {});
 
-    if (response.code !== 0) {
+    if (response.code !== 200) {
       return errorResult(
         `API error: ${response.msg} (code: ${response.code})`,
       );
