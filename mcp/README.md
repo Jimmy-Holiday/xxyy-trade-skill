@@ -184,6 +184,10 @@ After connecting, just tell your AI assistant:
 | "Query token details for `<contract_address>`" | Security check + token info |
 | "Show my PNL for `<token_address>` on BSC" | Profit/loss summary for a token |
 | "Show my trade history on SOL" | Paginated list of successful trades |
+| "Show KOL buy list on SOL" | Query KOL wallet buy activity |
+| "Get tag holder buy list on BSC" | Query specific tag holder buys |
+| "Show label list for AGENT_KOL" | Query tokens with labels (SOL only) |
+| "Get AI trending signals" | Query AI trend signal tokens (SOL only) |
 | "Ping XXYY API" | Verify API Key connectivity |
 | "What's my IP?" | Check outbound IP for whitelist setup |
 

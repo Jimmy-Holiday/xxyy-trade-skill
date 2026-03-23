@@ -10,7 +10,7 @@ description: >-
   "check IP", "get IP", "IP whitelist", "查IP", "IP白名单",
   or mentions trading on Solana/ETH/BSC/Base chains via XXYY.
   Enables on-chain token trading and data queries through the XXYY Open API.
-version: 1.2.4
+version: 1.2.5
 metadata: { "openclaw": { "requires": { "env": ["XXYY_API_KEY"], "bins": ["curl"] }, "primaryEnv": "XXYY_API_KEY", "emoji": "💹", "homepage": "https://www.xxyy.io" } }
 ---
 
@@ -52,6 +52,8 @@ All requests require header: `Authorization: Bearer $XXYY_API_KEY`
 > - `GET  /api/trade/open/api/ip` — Get IP (exempt from IP whitelist)
 > - `GET  /api/trade/open/api/kol-buy-list` — KOL Buy List
 > - `GET  /api/trade/open/api/tag-holder-buy-list` — Tag Holder Buy List
+> - `GET  /api/trade/open/api/label-list` — Label List (tokens with specific labels, SOL only)
+> - `POST /api/trade/open/api/signal-list` — Signal List (AI trending signals, SOL only)
 
 ### Buy Token
 `POST ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/swap`
@@ -507,7 +509,7 @@ Response fields:
 - **ip**: Your current outbound IP address
 
 ### KOL Buy List
-`GET ${XXYY_API_BASE_URL:-https://www.xxyy.io}/open/api/kol-buy-list?chain={chain}`
+`GET ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/kol-buy-list?chain={chain}`
 
 Get KOL (Key Opinion Leader) recent buy list. Shows tokens recently purchased by influential traders.
 
@@ -551,7 +553,7 @@ Response fields:
 - **marketCap**: Market cap
 
 ### Tag Holder Buy List
-`GET ${XXYY_API_BASE_URL:-https://www.xxyy.io}/open/api/tag-holder-buy-list?chain={chain}`
+`GET ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/tag-holder-buy-list?chain={chain}`
 
 Get tag holder (Smart Money, Whale, etc.) recent buy list. Shows tokens recently purchased by tagged wallets.
 
@@ -887,10 +889,10 @@ curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/ip" \
   -H "Authorization: Bearer $XXYY_API_KEY"
 
 # KOL Buy List
-curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/open/api/kol-buy-list?chain=sol" \
-  -H "X-API-KEY: $XXYY_API_KEY"
+curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/kol-buy-list?chain=sol" \
+  -H "Authorization: Bearer $XXYY_API_KEY"
 
 # Tag Holder Buy List
-curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/open/api/tag-holder-buy-list?chain=bsc" \
-  -H "X-API-KEY: $XXYY_API_KEY"
+curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/tag-holder-buy-list?chain=bsc" \
+  -H "Authorization: Bearer $XXYY_API_KEY"
 ```

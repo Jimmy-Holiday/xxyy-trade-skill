@@ -184,6 +184,10 @@ XXYY_API_KEY=<your-key> node /path/to/xxyy-trade-skill/mcp/dist/index.js
 | "查一下这个代币 `<合约地址>` 的详情" | 安全检查 + 代币信息 |
 | "看看我在 BSC 上 `<代币地址>` 的盈亏" | 查询代币 PNL 盈亏 |
 | "看看我 SOL 上的交易记录" | 分页查询成功交易记录 |
+| "看看 SOL 上 KOL 买入列表" | 查询 KOL 钱包买入活动 |
+| "查询 BSC 上标签持有者买入列表" | 查询特定标签持有者买入 |
+| "显示 AGENT_KOL 标签列表" | 查询带标签的代币列表（仅支持 SOL）|
+| "获取 AI 趋势信号" | 查询 AI 趋势信号代币（仅支持 SOL）|
 | "Ping 一下 XXYY API" | 验证连通性 |
 | "我的 IP 是什么？" | 查询出口 IP，用于配置白名单 |
 
