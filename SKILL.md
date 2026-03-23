@@ -596,6 +596,108 @@ Response fields:
 - **price**: Buy price
 - **marketCap**: Market cap
 
+### Label List
+`GET ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/label-list?chain={chain}&labelType={labelType}`
+
+Get tokens with specific labels (e.g., AGENT_KOL marked tokens). Currently only supports Solana chain.
+
+#### Label List Parameters
+
+| Param | Required | Type | Valid values | Description |
+|-------|----------|------|-------------|-------------|
+| `chain` | NO | string | `sol` | Default `sol`. Currently only Solana supported |
+| `labelType` | NO | string | `AGENT_KOL` | Default `AGENT_KOL`. Currently only AGENT_KOL supported |
+
+#### Label List Response
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": [
+    {
+      "pairAddress": "PairAddress...",
+      "dexId": "raydium",
+      "dexName": "Raydium",
+      "symbol": "TOKEN",
+      "name": "Token Name",
+      "tokenAddress": "TokenAddress...",
+      "imageUrl": "https://...",
+      "priceUSD": "0.00123",
+      "marketCapUSD": "123456.78",
+      "priceChange24H": "15.5",
+      "launchFrom": "pump",
+      "links": {
+        "tg": "https://t.me/...",
+        "x": "https://x.com/...",
+        "web": "https://..."
+      }
+    }
+  ],
+  "success": true
+}
+```
+
+Response fields:
+- **pairAddress**: Trading pair address
+- **dexId**: DEX identifier
+- **dexName**: DEX name
+- **symbol**: Token symbol
+- **name**: Token name
+- **tokenAddress**: Token contract address
+- **imageUrl**: Token logo URL
+- **priceUSD**: Current price in USD
+- **marketCapUSD**: Market capitalization in USD
+- **priceChange24H**: 24-hour price change percentage
+- **launchFrom**: Launch platform
+- **links**: Social media links (Telegram, X/Twitter, Website)
+
+### Signal List
+`POST ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/signal-list?type={type}&chain={chain}`
+
+Get AI trend signal list (e.g., open-ai-trending tokens). Currently only supports Solana chain.
+
+#### Signal List Parameters
+
+| Param | Required | Type | Valid values | Description |
+|-------|----------|------|-------------|-------------|
+| `type` | NO | string | `open-ai-trending` | Default `open-ai-trending`. Currently only open-ai-trending supported |
+| `chain` | NO | string | `sol` | Default `sol`. Currently only Solana supported |
+
+Request body: Empty JSON object `{}`
+
+#### Signal List Response
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": [
+    {
+      "pairAddress": "PairAddress...",
+      "dexId": "raydium",
+      "dexName": "Raydium",
+      "symbol": "TOKEN",
+      "name": "Token Name",
+      "tokenAddress": "TokenAddress...",
+      "imageUrl": "https://...",
+      "priceUSD": "0.00456",
+      "marketCapUSD": "456789.12",
+      "priceChange24H": "-5.2",
+      "launchFrom": "pump",
+      "links": {
+        "tg": "https://t.me/...",
+        "x": "https://x.com/...",
+        "web": "https://..."
+      }
+    }
+  ],
+  "success": true
+}
+```
+
+Response fields: Same as Label List (see above)
+
 ## Execution Rules
 
 1. **Always confirm before trading** -- Ask user to confirm: chain, token address, amount/percentage, buy or sell
