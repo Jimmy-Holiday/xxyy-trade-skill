@@ -26,6 +26,8 @@
 | `list_wallets` | 查询用户钱包列表及余额 |
 | `wallet_info` | 查询单个钱包详情及代币持仓 |
 | `get_ip` | 查询当前出口 IP，用于配置白名单 |
+| `kol_buy_list` | 获取 KOL（意见领袖）最近买入列表 |
+| `tag_holder_buy_list` | 获取标签持有者（Smart Money、巨鲸等）最近买入列表 |
 
 ## 前置条件
 

@@ -26,6 +26,8 @@ Supports **Solana**, **Ethereum**, **BSC**, and **Base** chains.
 | `list_wallets` | List user wallets with balances on a specific chain |
 | `wallet_info` | Query a single wallet's balance and token holdings |
 | `get_ip` | Get your outbound IP for whitelist configuration |
+| `kol_buy_list` | Get KOL (Key Opinion Leader) recent buy list |
+| `tag_holder_buy_list` | Get tag holder (Smart Money, Whale, etc.) recent buy list |
 
 ## Prerequisites
 

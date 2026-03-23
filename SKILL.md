@@ -10,7 +10,7 @@ description: >-
   "check IP", "get IP", "IP whitelist", "查IP", "IP白名单",
   or mentions trading on Solana/ETH/BSC/Base chains via XXYY.
   Enables on-chain token trading and data queries through the XXYY Open API.
-version: 1.2.3
+version: 1.2.4
 metadata: { "openclaw": { "requires": { "env": ["XXYY_API_KEY"], "bins": ["curl"] }, "primaryEnv": "XXYY_API_KEY", "emoji": "💹", "homepage": "https://www.xxyy.io" } }
 ---
 
@@ -50,6 +50,8 @@ All requests require header: `Authorization: Bearer $XXYY_API_KEY`
 > - `GET  /api/trade/open/api/pnl` — PNL Query
 > - `GET  /api/trade/open/api/trades` — Trade History
 > - `GET  /api/trade/open/api/ip` — Get IP (exempt from IP whitelist)
+> - `GET  /api/trade/open/api/kol-buy-list` — KOL Buy List
+> - `GET  /api/trade/open/api/tag-holder-buy-list` — Tag Holder Buy List
 
 ### Buy Token
 `POST ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/swap`
@@ -504,6 +506,94 @@ No parameters required.
 Response fields:
 - **ip**: Your current outbound IP address
 
+### KOL Buy List
+`GET ${XXYY_API_BASE_URL:-https://www.xxyy.io}/open/api/kol-buy-list?chain={chain}`
+
+Get KOL (Key Opinion Leader) recent buy list. Shows tokens recently purchased by influential traders.
+
+#### KOL Buy List Parameters
+
+| Param | Required | Type | Valid values | Description |
+|-------|----------|------|-------------|-------------|
+| `chain` | NO | string | `sol` / `bsc` | Default `sol`. Only SOL and BSC supported |
+
+#### KOL Buy List Response
+
+```json
+{
+  "code": 0,
+  "msg": "success",
+  "data": [
+    {
+      "tokenAddress": "TokenMintAddress...",
+      "tokenName": "TOKEN",
+      "tokenSymbol": "TKN",
+      "kolAddress": "KolWalletAddress...",
+      "kolName": "KOL Name",
+      "buyAmount": "1.5",
+      "buyTime": 1711234567890,
+      "price": "0.00123",
+      "marketCap": "1234567.89"
+    }
+  ]
+}
+```
+
+Response fields:
+- **tokenAddress**: Token contract address
+- **tokenName**: Token name
+- **tokenSymbol**: Token symbol
+- **kolAddress**: KOL wallet address
+- **kolName**: KOL name
+- **buyAmount**: Buy amount (SOL/BNB)
+- **buyTime**: Buy timestamp (milliseconds)
+- **price**: Buy price
+- **marketCap**: Market cap
+
+### Tag Holder Buy List
+`GET ${XXYY_API_BASE_URL:-https://www.xxyy.io}/open/api/tag-holder-buy-list?chain={chain}`
+
+Get tag holder (Smart Money, Whale, etc.) recent buy list. Shows tokens recently purchased by tagged wallets.
+
+#### Tag Holder Buy List Parameters
+
+| Param | Required | Type | Valid values | Description |
+|-------|----------|------|-------------|-------------|
+| `chain` | NO | string | `sol` / `bsc` | Default `sol`. Only SOL and BSC supported |
+
+#### Tag Holder Buy List Response
+
+```json
+{
+  "code": 0,
+  "msg": "success",
+  "data": [
+    {
+      "tokenAddress": "TokenMintAddress...",
+      "tokenName": "TOKEN",
+      "tokenSymbol": "TKN",
+      "holderAddress": "HolderWalletAddress...",
+      "holderTag": "Smart Money",
+      "buyAmount": "2.5",
+      "buyTime": 1711234567890,
+      "price": "0.00456",
+      "marketCap": "2345678.90"
+    }
+  ]
+}
+```
+
+Response fields:
+- **tokenAddress**: Token contract address
+- **tokenName**: Token name
+- **tokenSymbol**: Token symbol
+- **holderAddress**: Holder wallet address
+- **holderTag**: Holder tag (e.g., Smart Money, Whale)
+- **buyAmount**: Buy amount (SOL/BNB)
+- **buyTime**: Buy timestamp (milliseconds)
+- **price**: Buy price
+- **marketCap**: Market cap
+
 ## Execution Rules
 
 1. **Always confirm before trading** -- Ask user to confirm: chain, token address, amount/percentage, buy or sell
@@ -795,4 +885,12 @@ curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/trades?wal
 # Get IP (exempt from IP whitelist)
 curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/ip" \
   -H "Authorization: Bearer $XXYY_API_KEY"
+
+# KOL Buy List
+curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/open/api/kol-buy-list?chain=sol" \
+  -H "X-API-KEY: $XXYY_API_KEY"
+
+# Tag Holder Buy List
+curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/open/api/tag-holder-buy-list?chain=bsc" \
+  -H "X-API-KEY: $XXYY_API_KEY"
 ```

@@ -103,6 +103,8 @@ Once installed, simply tell Claude what you want to do:
 - `"show almost-graduated tokens on BSC with market cap > 50000"`
 - `"query token details for 0x1234..."`
 - `"monitor SOL for new tokens, min holders 50"`
+- `"show KOL buy list on SOL"`
+- `"get tag holder buy list on BSC"`
 
 The skill will auto-select a wallet and confirm trade details with you before executing.
 
