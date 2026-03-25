@@ -54,7 +54,7 @@ All requests require header: `Authorization: Bearer $XXYY_API_KEY`
 > - `GET  /api/trade/open/api/kol-buy-list` — KOL Buy List
 > - `GET  /api/trade/open/api/tag-holder-buy-list` — Tag Holder Buy List
 > - `GET  /api/trade/open/api/label-list` — Label List (tokens with specific labels, SOL only)
-> - `POST /api/trade/open/api/signal-list` — Signal List (AI trending signals, SOL only)
+> - `POST /api/trade/open/api/signal-list` — Signal List (AI trending signals, SOL/BSC)
 
 ### Buy Token
 `POST ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/swap`
@@ -648,7 +648,7 @@ Get tokens with specific labels (e.g., AGENT_KOL marked tokens). Currently only 
 
 | Param | Required | Type | Valid values | Description |
 |-------|----------|------|-------------|-------------|
-| `chain` | NO | string | `sol` | Default `sol`. Currently only Solana supported |
+| `chain` | NO | string | `sol` / `bsc` | Default `sol`. Supports SOL and BSC |
 | `labelType` | NO | string | `AGENT_KOL` | Default `AGENT_KOL`. Currently only AGENT_KOL supported |
 
 #### Label List Response
@@ -698,14 +698,14 @@ Response fields:
 ### Signal List
 `POST ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/signal-list?type={type}&chain={chain}`
 
-Get AI trend signal list (e.g., open-ai-trending tokens). Currently only supports Solana chain.
+Get AI trend signal list (e.g., open-ai-trending tokens). Supports SOL and BSC chains.
 
 #### Signal List Parameters
 
 | Param | Required | Type | Valid values | Description |
 |-------|----------|------|-------------|-------------|
 | `type` | NO | string | `open-ai-trending` | Default `open-ai-trending`. Currently only open-ai-trending supported |
-| `chain` | NO | string | `sol` | Default `sol`. Currently only Solana supported |
+| `chain` | NO | string | `sol` / `bsc` | Default `sol`. Supports SOL and BSC |
 
 Request body: Empty JSON object `{}`
 
@@ -1045,7 +1045,7 @@ curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/tag-holder
 curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/label-list?chain=sol&labelType=AGENT_KOL" \
   -H "Authorization: Bearer $XXYY_API_KEY"
 
-# Signal List (SOL only)
+# Signal List (SOL/BSC)
 curl -s -X POST "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/signal-list?type=open-ai-trending&chain=sol" \
   -H "Authorization: Bearer $XXYY_API_KEY" \
   -H "Content-Type: application/json" \

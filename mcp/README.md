@@ -29,7 +29,7 @@ Supports **Solana**, **Ethereum**, **BSC**, and **Base** chains.
 | `kol_buy_list` | Get KOL (Key Opinion Leader) recent buy list |
 | `tag_holder_buy_list` | Get tag holder (Smart Money, Whale, etc.) recent buy list |
 | `label_list` | Get tokens with specific labels (e.g., AGENT_KOL), SOL only |
-| `signal_list` | Get AI trend signal tokens (e.g., open-ai-trending), SOL only |
+| `signal_list` | Get AI trend signal tokens (e.g., open-ai-trending), SOL/BSC |
 
 ## Prerequisites
 
@@ -189,7 +189,7 @@ After connecting, just tell your AI assistant:
 | "Show KOL buy list on SOL" | Query KOL wallet buy activity |
 | "Get tag holder buy list on BSC" | Query specific tag holder buys |
 | "Show label list for AGENT_KOL" | Query tokens with labels (SOL only) |
-| "Get AI trending signals" | Query AI trend signal tokens (SOL only) |
+| "Get AI trending signals" | Query AI trend signal tokens (SOL/BSC) |
 | "Ping XXYY API" | Verify API Key connectivity |
 | "What's my IP?" | Check outbound IP for whitelist setup |
 

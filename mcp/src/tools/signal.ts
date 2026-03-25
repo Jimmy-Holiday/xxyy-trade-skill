@@ -2,7 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { fetchAndFormatTokenList } from "./token-list-common.js";
 
-const SUPPORTED_CHAINS = ["sol"] as const;
+const SUPPORTED_CHAINS = ["sol", "bsc"] as const;
 const SUPPORTED_SIGNAL_TYPES = ["open-ai-trending"] as const;
 
 export function registerSignalTools(server: McpServer) {
@@ -19,7 +19,7 @@ export function registerSignalTools(server: McpServer) {
         .enum(SUPPORTED_CHAINS)
         .optional()
         .default("sol")
-        .describe("Chain type, currently only supports sol"),
+        .describe("Chain type, supports sol and bsc"),
     },
     async ({ type, chain }) => {
       const url = `/api/trade/open/api/signal-list?type=${type}&chain=${chain}`;
