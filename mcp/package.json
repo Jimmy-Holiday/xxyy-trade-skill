@@ -1,6 +1,6 @@
 {
   "name": "xxyy-trade-mcp",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "MCP Server for on-chain token trading and data queries via XXYY Open API. Supports Solana, Ethereum, BSC, and Base.",
   "type": "module",
   "main": "dist/index.js",

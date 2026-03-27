@@ -13,10 +13,11 @@ import { registerKolTools } from "./tools/kol.js";
 import { registerTagHolderTools } from "./tools/tag-holder.js";
 import { registerLabelTools } from "./tools/label.js";
 import { registerSignalTools } from "./tools/signal.js";
+import { registerTrendingTools } from "./tools/trending.js";
 
 const server = new McpServer({
   name: "xxyy-trade",
-  version: "1.2.5",
+  version: "1.2.6",
 });
 
 registerSwapTools(server);
@@ -30,6 +31,7 @@ registerKolTools(server);
 registerTagHolderTools(server);
 registerLabelTools(server);
 registerSignalTools(server);
+registerTrendingTools(server);
 
 const transport = new StdioServerTransport();
 await server.connect(transport);

@@ -10,7 +10,7 @@ description: >-
   "check IP", "get IP", "IP whitelist", "查IP", "IP白名单",
   or mentions trading on Solana/ETH/BSC/Base chains via XXYY.
   Enables on-chain token trading and data queries through the XXYY Open API.
-version: 1.2.5
+version: 1.2.6
 metadata: { "openclaw": { "requires": { "env": ["XXYY_API_KEY"], "bins": ["curl"] }, "primaryEnv": "XXYY_API_KEY", "emoji": "💹", "homepage": "https://www.xxyy.io" } }
 ---
 
@@ -54,6 +54,7 @@ All requests require header: `Authorization: Bearer $XXYY_API_KEY`
 > - `GET  /api/trade/open/api/tag-holder-buy-list` — Tag Holder Buy List
 > - `GET  /api/trade/open/api/label-list` — Label List (tokens with specific labels, SOL only)
 > - `POST /api/trade/open/api/signal-list` — Signal List (AI trending signals, SOL/BSC)
+> - `POST /api/trade/open/api/trending-list` — Trending List (hot tokens by period, SOL/BSC)
 
 ### Buy Token
 `POST ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/swap`
@@ -740,6 +741,105 @@ Request body: Empty JSON object `{}`
 
 Response fields: Same as Label List (see above)
 
+### Trending List
+`POST ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/trending-list?chain={chain}`
+
+Get trending/hot token list. Shows the most active tokens within a given time period. Supports SOL and BSC chains.
+
+#### Trending List Parameters
+
+| Param | Required | Type | Valid values | Description |
+|-------|----------|------|-------------|-------------|
+| `chain` | NO | string | `sol` / `bsc` | Default `sol`. Only SOL and BSC supported |
+| `period` | YES | string | `1M` / `5M` / `30M` / `1H` / `6H` / `24H` | Time period for trending. Not all periods available for all internal categories |
+
+Request body:
+```json
+{ "period": "5M" }
+```
+
+#### Trending List Response
+
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": [
+    {
+      "imageUrl": "https://...",
+      "createTime": "1774581395318",
+      "symbol": "TOKEN",
+      "name": "Token Name",
+      "dexId": "pfamm",
+      "headerImage": "https://...",
+      "pairAddress": "PairAddress...",
+      "tokenAddress": "TokenMintAddress...",
+      "priceUSD": "0.00005670",
+      "priceChange24H": "98.00",
+      "launchPlatform": {
+        "name": "PUMP",
+        "progress": 85,
+        "completed": false,
+        "launchedPair": null
+      },
+      "dexName": "Pump AMM",
+      "dexIcon": "https://...",
+      "marketCapUSD": "56708.41",
+      "links": { "tg": "", "x": "https://x.com/...", "web": "" },
+      "security": {
+        "mintAuthority": { "value": false, "passed": true },
+        "freezeAuthority": { "value": false, "passed": true },
+        "topHolder": { "value": 18.61, "passed": false },
+        "lpBurned": { "value": 100.0, "passed": true }
+      },
+      "holders": 641,
+      "devHoldPercent": "0.0000000000000",
+      "smartWallets": { "total": 3, "records": [{ "wallet": "...", "action": "buy", "nativeAmount": "1.5" }] },
+      "sourceDexIcon": "https://...",
+      "launchFrom": "pump",
+      "extendFlags": { "live": false },
+      "volume": 142092.91,
+      "liquid": 20995.35,
+      "buyCount": 2123,
+      "sellCount": 1620,
+      "auditInfo": {
+        "devHp": 0,
+        "snipers": 20,
+        "insiderHp": 0,
+        "newHp": 10.63,
+        "bundleHp": 0,
+        "dexPaid": true
+      }
+    }
+  ]
+}
+```
+
+Response fields:
+- **imageUrl**: Token logo URL
+- **createTime**: Trading pair creation timestamp (milliseconds)
+- **symbol**: Token symbol
+- **name**: Token name
+- **tokenAddress**: Token contract address
+- **pairAddress**: Trading pair address
+- **priceUSD**: Current price in USD
+- **priceChange24H**: 24-hour price change percentage
+- **marketCapUSD**: Market capitalization in USD
+- **volume**: Trading volume
+- **liquid**: Liquidity
+- **buyCount**: Buy transaction count
+- **sellCount**: Sell transaction count
+- **holders**: Number of holders
+- **devHoldPercent**: Developer holding percentage
+- **dexName**: DEX pool name
+- **launchFrom**: Launch platform identifier
+- **launchPlatform**: Launch platform details (name, progress, completed, launchedPair)
+- **links**: Social media links (tg, x, web)
+- **security**: Security info — mintAuthority, freezeAuthority (value=bool, passed=bool), topHolder, lpBurned (value=number, passed=bool)
+- **smartWallets**: Smart wallet activity (total count + recent records with wallet/action/nativeAmount)
+- **extendFlags.live**: Whether token is currently live streaming
+- **auditInfo**: Audit details — devHp (dev holding %), snipers count, insiderHp, newHp (new wallet holding %), bundleHp, dexPaid (DexScreener paid)
+
 ## Execution Rules
 
 1. **Always confirm before trading** -- Ask user to confirm: chain, token address, amount/percentage, buy or sell
@@ -1049,4 +1149,10 @@ curl -s -X POST "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/si
   -H "Authorization: Bearer $XXYY_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{}'
+
+# Trending List (SOL/BSC)
+curl -s -X POST "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/trending-list?chain=sol" \
+  -H "Authorization: Bearer $XXYY_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"period": "5M"}'
 ```
