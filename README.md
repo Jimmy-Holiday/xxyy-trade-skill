@@ -107,6 +107,8 @@ Once installed, simply tell Claude what you want to do:
 - `"get tag holder buy list on BSC"`
 - `"show label list for AGENT_KOL"` (SOL only)
 - `"get AI trending signals"` (SOL/BSC)
+- `"show trending tokens on SOL"` (SOL/BSC)
+- `"launch a new token on SOL"` (SOL/BSC)
 
 The skill will auto-select a wallet and confirm trade details with you before executing.
 

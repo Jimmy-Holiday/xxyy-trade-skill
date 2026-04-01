@@ -30,6 +30,8 @@
 | `tag_holder_buy_list` | 获取标签持有者（Smart Money、巨鲸等）最近买入列表 |
 | `label_list` | 获取特定标签的代币列表（如 AGENT_KOL），仅支持 SOL |
 | `signal_list` | 获取 AI 趋势信号代币列表（如 open-ai-trending），支持 SOL/BSC |
+| `trending_list` | 获取热门代币列表（按时间段），支持 SOL/BSC |
+| `launch_token` | 在 SOL 或 BSC 上发行（创建）新代币，可选初始买入 |
 
 ## 前置条件
 
@@ -189,7 +191,9 @@ XXYY_API_KEY=<your-key> node /path/to/xxyy-trade-skill/mcp/dist/index.js
 | "看看 SOL 上 KOL 买入列表" | 查询 KOL 钱包买入活动 |
 | "查询 BSC 上标签持有者买入列表" | 查询特定标签持有者买入 |
 | "显示 AGENT_KOL 标签列表" | 查询带标签的代币列表（仅支持 SOL）|
-| "获取 AI 趋势信号" | 查询 AI 趋势信号代币（仅支持 SOL）|
+| "获取 AI 趋势信号" | 查询 AI 趋势信号代币（支持 SOL/BSC）|
+| "看看 SOL 上的热门代币" | 按时间段查询热门代币（支持 SOL/BSC）|
+| "在 SOL 上发一个新代币" | 创建新代币，可选初始买入（支持 SOL/BSC）|
 | "Ping 一下 XXYY API" | 验证连通性 |
 | "我的 IP 是什么？" | 查询出口 IP，用于配置白名单 |
 

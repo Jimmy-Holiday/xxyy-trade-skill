@@ -30,6 +30,8 @@ Supports **Solana**, **Ethereum**, **BSC**, and **Base** chains.
 | `tag_holder_buy_list` | Get tag holder (Smart Money, Whale, etc.) recent buy list |
 | `label_list` | Get tokens with specific labels (e.g., AGENT_KOL), SOL only |
 | `signal_list` | Get AI trend signal tokens (e.g., open-ai-trending), SOL/BSC |
+| `trending_list` | Get trending/hot tokens by time period, SOL/BSC |
+| `launch_token` | Launch (create) a new token on SOL or BSC, with optional initial buy |
 
 ## Prerequisites
 
@@ -190,6 +192,8 @@ After connecting, just tell your AI assistant:
 | "Get tag holder buy list on BSC" | Query specific tag holder buys |
 | "Show label list for AGENT_KOL" | Query tokens with labels (SOL only) |
 | "Get AI trending signals" | Query AI trend signal tokens (SOL/BSC) |
+| "Show trending tokens on SOL" | Get hot tokens by time period (SOL/BSC) |
+| "Launch a new token on SOL" | Create a new token, optionally buy initial amount |
 | "Ping XXYY API" | Verify API Key connectivity |
 | "What's my IP?" | Check outbound IP for whitelist setup |
 

@@ -107,6 +107,8 @@ export XXYY_API_BASE_URL=https://www.xxyy.io
 - `"查询 BSC 上标签持有者买入列表"`
 - `"显示 AGENT_KOL 标签列表"` (仅支持 SOL)
 - `"获取 AI 趋势信号"` (支持 SOL/BSC)
+- `"看看 SOL 上的热门代币"` (支持 SOL/BSC)
+- `"在 SOL 上发一个新代币"` (支持 SOL/BSC)
 
 Skill 会自动选择钱包，并在执行交易前与你确认交易细节。
 
