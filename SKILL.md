@@ -8,9 +8,10 @@ description: >-
   "AI scan", "AI扫链", "auto scan", "smart scan", "tweet scan", "推文扫链",
   "twitter scan", "onboarding", "get started",
   "check IP", "get IP", "IP whitelist", "查IP", "IP白名单",
+  "launch token", "create token", "发币", "创建代币",
   or mentions trading on Solana/ETH/BSC/Base chains via XXYY.
   Enables on-chain token trading and data queries through the XXYY Open API.
-version: 1.2.6
+version: 1.3.0
 metadata: { "openclaw": { "requires": { "env": ["XXYY_API_KEY"], "bins": ["curl"] }, "primaryEnv": "XXYY_API_KEY", "emoji": "💹", "homepage": "https://www.xxyy.io" } }
 ---
 
@@ -55,6 +56,7 @@ All requests require header: `Authorization: Bearer $XXYY_API_KEY`
 > - `GET  /api/trade/open/api/label-list` — Label List (tokens with specific labels, SOL only)
 > - `POST /api/trade/open/api/signal-list` — Signal List (AI trending signals, SOL/BSC)
 > - `POST /api/trade/open/api/trending-list` — Trending List (hot tokens by period, SOL/BSC)
+> - `POST /api/trade/open/api/{chain}/launch` — Launch Token (create new token, SOL/BSC)
 
 ### Buy Token
 `POST ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/swap`
@@ -840,6 +842,127 @@ Response fields:
 - **extendFlags.live**: Whether token is currently live streaming
 - **auditInfo**: Audit details — devHp (dev holding %), snipers count, insiderHp, newHp (new wallet holding %), bundleHp, dexPaid (DexScreener paid)
 
+### Launch Token
+`POST ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/{chain}/launch`
+
+Launch (create) a new token on SOL or BSC chain. Optionally buy an initial amount of the newly created token.
+
+#### Path Parameters
+
+| Param | Required | Type | Valid values | Description |
+|-------|----------|------|-------------|-------------|
+| `chain` | YES | string | `sol` / `bsc` | Only SOL and BSC supported |
+
+#### Launch Request Body
+
+| Param | Required | Type | Description |
+|-------|----------|------|-------------|
+| `walletAddress` | YES | string | Wallet address (must belong to the API Key's account) |
+| `name` | YES | string | Token name |
+| `symbol` | YES | string | Token symbol |
+| `buyAmount` | NO | string | Native token amount for initial buy. "0" = create only. Default: "0" |
+| `solOptions` | Sol only | object | Solana chain specific options (see below) |
+| `bscOptions` | BSC only | object | BSC chain specific options (see below) |
+
+**buyAmount Limits:**
+- SOL: max 100 SOL, min balance = buyAmount + 0.01 SOL
+- BSC: max 20 BNB, min balance = buyAmount + 0.015 BNB
+
+#### solOptions (chain=sol)
+
+| Param | Required | Type | Default | Description |
+|-------|----------|------|---------|-------------|
+| `uri` | YES | string | - | Metadata JSON URI (Metaplex standard, containing name/symbol/description/image) |
+| `slippage` | NO | integer | 100 | Slippage in basis points. 100 = 1%. Only effective when buyAmount > 0 |
+| `priorityFee` | NO | long | 100000 | Priority fee in lamports |
+| `tipFee` | NO | long | 100000 | Tip fee in lamports |
+| `model` | NO | integer | 1 | 1 = MEV protection, 2 = fast mode |
+| `creator` | NO | string | null | Creator address (base58). Defaults to signing wallet |
+| `mayhemMode` | NO | boolean | false | Pump mayhem mode |
+| `cashback` | NO | boolean | false | Pump cashback |
+
+> Platform fee (1%) is charged automatically when buyAmount > 0, not configurable.
+
+#### bscOptions (chain=bsc)
+
+| Param | Required | Type | Default | Description |
+|-------|----------|------|---------|-------------|
+| `desc` | YES | string | - | Token description |
+| `image` | YES | string | - | Image URL / base64 / data URI (≤5MB) |
+| `label` | NO | string | "Meme" | Category: Meme, AI, Defi, Games, Infra, De-Sci, Social, Depin, Charity, Others |
+| `gasPrice` | NO | string | null | Custom gas price (wei). Auto-fetched if not provided |
+| `model` | NO | integer | 1 | 1 = MEV protection (bundle), 2 = fast mode |
+| `feePlan` | NO | boolean | false | Fee plan toggle |
+| `webUrl` | NO | string | "" | Website URL |
+| `twitterUrl` | NO | string | "" | Twitter URL |
+| `telegramUrl` | NO | string | "" | Telegram URL |
+| `tokenTaxInfo` | NO | object | null | Token tax configuration (see below) |
+
+#### tokenTaxInfo (BSC only)
+
+| Param | Required | Type | Description |
+|-------|----------|------|-------------|
+| `feeRate` | YES | integer | Trading fee rate. Fixed options: 1, 3, 5, 10 (representing 1%-10%) |
+| `burnRate` | YES | integer | Burn rate (0-100) |
+| `divideRate` | YES | integer | Dividend distribution rate (0-100) |
+| `liquidityRate` | YES | integer | Liquidity pool rate (0-100) |
+| `recipientRate` | YES | integer | Recipient allocation rate (0-100) |
+| `minSharing` | Conditional | long | Min token amount for dividend participation (in ether). Required when divideRate > 0. Format: d × 10^n (n≥5, 1≤d≤9) |
+| `recipientAddress` | Conditional | string | Recipient address (0x...). Required when recipientRate > 0 |
+
+**Constraint:** burnRate + divideRate + liquidityRate + recipientRate must equal 100.
+
+#### Launch Response
+
+Success:
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "txHash": "transaction hash or signature",
+    "tokenAddress": "newly created token address",
+    "success": true
+  },
+  "success": true
+}
+```
+
+On-chain execution failed:
+```json
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "txHash": "transaction hash or signature",
+    "tokenAddress": null,
+    "success": false
+  },
+  "success": true
+}
+```
+
+#### Launch Error Codes
+
+| Code | Message | Description |
+|------|---------|-------------|
+| 8004 | wrong_parameter | Missing or invalid required fields |
+| 8006 | insufficient_balance | Wallet balance below minimum |
+| 8060 | api_key_invalid | Invalid API Key |
+| 8062 | api_key_rate_limited | QPS limit exceeded |
+| 8106 | open_api_launch_chain_not_supported | Chain not supported (only sol/bsc) |
+| 8107 | open_api_launch_buy_amount_exceed | buyAmount exceeds max (SOL: 100, BSC: 20) |
+| 8108 | open_api_launch_failed | Node service call failed |
+| 9006 | wallet_not_exists | Wallet not found or not owned by current account |
+
+#### Launch Notes
+
+- Transaction confirmation timeout: SOL ~25s, BSC ~3-5s
+- SOL uri must be an accessible JSON metadata URL (Metaplex Token Metadata standard)
+- BSC image upload is handled by FourMeme platform internally
+- SOL mint address is randomly generated by the server
+- SOL platform fee (1%) is charged automatically when buyAmount > 0
+
 ## Execution Rules
 
 1. **Always confirm before trading** -- Ask user to confirm: chain, token address, amount/percentage, buy or sell
@@ -1155,4 +1278,28 @@ curl -s -X POST "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/tr
   -H "Authorization: Bearer $XXYY_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"period": "5M"}'
+
+# Launch Token - SOL (create only)
+curl -s -X POST "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/sol/launch" \
+  -H "Authorization: Bearer $XXYY_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"walletAddress":"<SOL_WALLET>","name":"My Token","symbol":"MTK","buyAmount":"0","solOptions":{"uri":"https://arweave.net/<metadata_id>","slippage":10000,"priorityFee":100000,"tipFee":100000,"model":1}}'
+
+# Launch Token - SOL (create + buy 0.5 SOL)
+curl -s -X POST "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/sol/launch" \
+  -H "Authorization: Bearer $XXYY_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"walletAddress":"<SOL_WALLET>","name":"My Token","symbol":"MTK","buyAmount":"0.5","solOptions":{"uri":"https://arweave.net/<metadata_id>","slippage":10000,"priorityFee":100000,"tipFee":100000,"model":1,"cashback":true}}'
+
+# Launch Token - BSC (create + buy 0.001 BNB)
+curl -s -X POST "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/bsc/launch" \
+  -H "Authorization: Bearer $XXYY_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"walletAddress":"<BSC_WALLET>","name":"Exchange the world","symbol":"ETW","buyAmount":"0.001","bscOptions":{"desc":"Exchange the world","image":"https://example.com/image.png","label":"Meme","gasPrice":"3000000000","model":1,"feePlan":false}}'
+
+# Launch Token - BSC (with token tax)
+curl -s -X POST "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/bsc/launch" \
+  -H "Authorization: Bearer $XXYY_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"walletAddress":"<BSC_WALLET>","name":"Tax Token","symbol":"TAXT","buyAmount":"0.1","bscOptions":{"desc":"A token with tax","image":"https://example.com/image.png","label":"Defi","model":1,"tokenTaxInfo":{"feeRate":5,"burnRate":20,"divideRate":30,"liquidityRate":0,"recipientRate":50,"minSharing":100000,"recipientAddress":"0x..."}}}'
 ```
