@@ -68,7 +68,7 @@ All requests require header: `Authorization: Bearer $XXYY_API_KEY`
   "tokenAddress": "<token_contract>",
   "isBuy": true,
   "amount": 0.1,
-  "tip": 0.001,
+  "tip": 0.0001,
   "slippage": 20
 }
 ```
@@ -82,7 +82,7 @@ All requests require header: `Authorization: Bearer $XXYY_API_KEY`
 | `tokenAddress` | YES | string | Valid contract address | Token contract address to buy |
 | `isBuy` | YES | boolean | `true` | Must be true for buy |
 | `amount` | YES | number | > 0 | Amount in native currency (SOL/ETH/BNB) |
-| `tip` | YES | number | SOL: 0.001-0.1 (unit: SOL); EVM: 0.1-100 (unit: Gwei) | Priority fee for all chains. If not provided, falls back to priorityFee |
+| `tip` | YES | number | SOL: 0.0001-0.1 (unit: SOL); EVM: 0.1-100 (unit: Gwei) | Priority fee for all chains. If not provided, falls back to priorityFee |
 | `slippage` | NO | number | 0-100 | Slippage tolerance %, default 20 |
 | `model` | NO | number | 1 or 2 | 1=anti-sandwich (default), 2=fast mode |
 | `priorityFee` | NO | number | >= 0 | Solana chain only. Extra priority fee in addition to tip |
@@ -97,7 +97,7 @@ All requests require header: `Authorization: Bearer $XXYY_API_KEY`
   "tokenAddress": "<token_contract>",
   "isBuy": false,
   "amount": 50,
-  "tip": 0.001
+  "tip": 0.0001
 }
 ```
 
@@ -110,7 +110,7 @@ All requests require header: `Authorization: Bearer $XXYY_API_KEY`
 | `tokenAddress` | YES | string | Valid contract address | Token contract address to sell |
 | `isBuy` | YES | boolean | `false` | Must be false for sell |
 | `amount` | YES | number | 1-100 | Sell percentage. Example: 50 = sell 50% of holdings |
-| `tip` | YES | number | SOL: 0.001-0.1 (unit: SOL); EVM: 0.1-100 (unit: Gwei) | Priority fee for all chains. If not provided, falls back to priorityFee |
+| `tip` | YES | number | SOL: 0.0001-0.1 (unit: SOL); EVM: 0.1-100 (unit: Gwei) | Priority fee for all chains. If not provided, falls back to priorityFee |
 | `slippage` | NO | number | 0-100 | Slippage tolerance %, default 20 |
 | `model` | NO | number | 1 or 2 | 1=anti-sandwich (default), 2=fast mode |
 | `priorityFee` | NO | number | >= 0 | Solana chain only. Extra priority fee in addition to tip |
@@ -118,7 +118,7 @@ All requests require header: `Authorization: Bearer $XXYY_API_KEY`
 ### tip / priorityFee Rules
 
 - `tip` (required) -- Universal priority fee for ALL chains. EVM chains (eth/bsc/base) use tip as the priority fee. If tip is not provided, the API falls back to priorityFee.
-  - SOL chain: unit is SOL (1 = 1 SOL, very expensive). Recommended range: 0.001 - 0.1
+  - SOL chain: unit is SOL (1 = 1 SOL, very expensive). Recommended range: 0.0001 - 0.1
   - EVM chains (eth/bsc/base): unit is Gwei. Recommended range: 0.1 - 100
 - `priorityFee` (optional) -- Only effective on Solana chain. Solana supports both tip and priorityFee simultaneously.
 
@@ -981,7 +981,7 @@ On-chain execution failed:
    - `chain` must be one of `sol`/`eth`/`bsc`/`base`
    - `isBuy` must be boolean `true` or `false`
    - `amount` for buy: must be > 0; for sell: must be 1-100
-   - `tip` must be provided; SOL chain: 0.001-0.1 (unit: SOL); EVM chains: 0.1-100 (unit: Gwei). **If tip is outside the recommended range, must warn the user about potentially high cost and require explicit confirmation before proceeding**
+   - `tip` must be provided; SOL chain: 0.0001-0.1 (unit: SOL); EVM chains: 0.1-100 (unit: Gwei). **If tip is outside the recommended range, must warn the user about potentially high cost and require explicit confirmation before proceeding**
    - `model` if provided must be 1 or 2
    - `priorityFee` if provided only applies to Solana chain
    - **Do NOT send any field names outside the parameter tables above**
@@ -1064,7 +1064,7 @@ These rules apply to all three strategies below.
 5. **Stop command** — User says "stop" or "停止" → immediately terminate the active polling strategy.
 6. **No auto-trading** — Strategy 2 and 3 scanning only displays results. NEVER automatically submit a trade. User must explicitly choose to buy.
 7. **Amount modification** — User says "修改金额 {value}" → update the buy amount for the next trade (does not affect in-flight trades).
-8. **Default parameters** — SOL: slippage 20%, tip 0.001 SOL. EVM chains (eth/bsc/base): slippage 20%, tip 1 Gwei. Users can override.
+8. **Default parameters** — SOL: slippage 20%, tip 0.0001 SOL. EVM chains (eth/bsc/base): slippage 20%, tip 1 Gwei. Users can override.
 9. **Error handling** — 8060/8061: stop strategy immediately. 8062: wait 2s and retry. 300: notify user of server error.
 10. **Parameter validation** — All trades follow Execution Rules #8 (strict parameter validation).
 
@@ -1219,7 +1219,7 @@ Where `#N` is the count of tokens scanned so far.
 curl -s -X POST "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/swap" \
   -H "Authorization: Bearer $XXYY_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"chain":"sol","walletAddress":"...","tokenAddress":"...","isBuy":true,"amount":0.1,"tip":0.001}'
+  -d '{"chain":"sol","walletAddress":"...","tokenAddress":"...","isBuy":true,"amount":0.1,"tip":0.0001}'
 
 # Query Trade
 curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/trade?txId=..." \

@@ -93,7 +93,7 @@ const swapSchema = {
   amount: z.number().describe("Amount"),
   tip: z
     .number()
-    .describe("Priority fee. SOL: 0.001-0.1 (SOL); EVM: 0.1-100 (Gwei)"),
+    .describe("Priority fee. SOL: 0.0001-0.1 (SOL); EVM: 0.1-100 (Gwei)"),
   slippage: z
     .number()
     .min(0)

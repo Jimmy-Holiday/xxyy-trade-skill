@@ -15,7 +15,7 @@ const SOL_ADDRESS_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 const EVM_ADDRESS_RE = /^0x[0-9a-fA-F]{40}$/;
 
 const TIP_RANGES: Record<Chain, { min: number; max: number; unit: string }> = {
-  sol: { min: 0.001, max: 0.1, unit: "SOL" },
+  sol: { min: 0.0001, max: 0.1, unit: "SOL" },
   eth: { min: 0.1, max: 100, unit: "Gwei" },
   bsc: { min: 0.1, max: 100, unit: "Gwei" },
   base: { min: 0.1, max: 100, unit: "Gwei" },
