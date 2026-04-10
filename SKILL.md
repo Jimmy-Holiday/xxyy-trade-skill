@@ -13,7 +13,8 @@ description: >-
   "holders", "top holders", "kol holders", "insider", "持仓", "持仓列表",
   or mentions trading on Solana/ETH/BSC/Base chains via XXYY.
   Enables on-chain token trading and data queries through the XXYY Open API.
-version: 1.5.0
+version: 1.5.1
+allowed-tools: Bash, Read, AskUserQuestion
 metadata: { "openclaw": { "requires": { "env": ["XXYY_API_KEY"], "bins": ["curl"] }, "primaryEnv": "XXYY_API_KEY", "emoji": "💹", "homepage": "https://www.xxyy.io" } }
 ---
 
@@ -32,6 +33,8 @@ Set environment variables before use:
 All requests require header: `Authorization: Bearer $XXYY_API_KEY`
 
 ## Security Notes
+
+> **⚠ READ BEFORE FIRST USE.** This skill executes **real on-chain trades** with real funds. There is **no read-only API key** — the same key signs both data queries and trades. Treat your `XXYY_API_KEY` like a hot wallet private key. The skill will surface a one-time risk acknowledgement on your first trade each session; after that, only trade details are confirmed so trading stays fast.
 
 - **⚠️ API Key = Wallet access** -- Your XXYY API Key can execute real on-chain trades using your wallet balance. If it leaks, anyone can buy/sell tokens with your funds. Never share it, never commit it to version control, never expose it in logs or public channels. If you suspect a leak, regenerate the key immediately at https://xxyy.io.
 - **Custodial trading model** -- XXYY is a custodial trading platform. You only provide your wallet address (public key) and API Key. No private keys or wallet signing are needed -- XXYY executes trades on your behalf through their platform.
@@ -972,7 +975,8 @@ On-chain execution failed:
 
 ## Execution Rules
 
-1. **Always confirm before trading** -- Ask user to confirm: chain, token address, amount/percentage, buy or sell
+1. **Confirm trade details before writing** -- Before any write operation (`/swap`, `/launch`, `/autoSell/*`), confirm with the user: chain, token address, amount/percentage, buy or sell, and which wallet. Prefer an inline summary; do not block the user with multiple back-and-forth prompts once details are clear.
+   - **First-trade-of-session risk acknowledgement**: On the **first** write operation of a session, additionally remind the user of the key risks in one compact block — `API Key = wallet access`, `no read-only key exists`, `IP whitelist recommended` — and have them confirm once via `AskUserQuestion`. Subsequent writes in the same session skip this risk block and only confirm trade details for speed.
 2. **Auto-query wallet** -- If the user does not provide a wallet address:
    a. If there is a remembered default wallet for that chain, use it directly and show its current balance via Wallet Info API before confirming.
    b. Otherwise, call List Wallets API. If only 1 wallet exists, auto-select it. If multiple, ask user to choose. If none, guide to create at https://www.xxyy.io/wallet/manager?chainId={chain}.

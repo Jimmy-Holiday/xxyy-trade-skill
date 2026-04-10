@@ -20,7 +20,7 @@ import { registerHolderTools } from "./tools/holders.js";
 
 const server = new McpServer({
   name: "xxyy-trade",
-  version: "1.5.0",
+  version: "1.5.1",
 });
 
 registerSwapTools(server);
