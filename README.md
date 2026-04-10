@@ -4,10 +4,32 @@
 
 Trade tokens on **Solana**, **Ethereum**, **BSC**, and **Base** chains via [XXYY](https://www.xxyy.io) Open API -- using natural language.
 
+[XXYY](https://www.xxyy.io) is a memecoin trading platform launched ~18 months ago, known for **fast execution**, **rich feature set**, and **high rebate / cashback ratios**. Using the XXYY API, you get both **fee discounts** and **referral rebates** — effective fees as low as **~0.4%**.
+
+![chains](https://img.shields.io/badge/chains-SOL%20|%20ETH%20|%20BSC%20|%20Base-blue)
+![fee](https://img.shields.io/badge/fee-as%20low%20as%200.4%25-brightgreen)
+![rebate](https://img.shields.io/badge/rebate-enabled-orange)
+![version](https://img.shields.io/badge/version-1.5.1-informational)
+![license](https://img.shields.io/badge/license-MIT-lightgrey)
+
 Supports **Claude Code Skill**, **OpenClaw**, and **MCP Server** (for Claude Desktop, Cursor, Windsurf, Cline, and more).
 
 > [!CAUTION]
 > **Your API Key = Your Wallet.** The XXYY API Key can execute real on-chain trades using your wallet balance. If it leaks, anyone can buy/sell tokens with your funds. **Never share it, never commit it to git, never paste it in public channels.** If you suspect a leak, regenerate the key immediately at [xxyy.io](https://www.xxyy.io).
+
+## Features
+
+| Page | Description |
+|------|-------------|
+| **Overview & Auth** | Supported chains, IP whitelist policy, error codes |
+| **Trading** | One-click buy/sell, multi-wallet switching, slippage & tip control, trade result polling |
+| **Feed Discovery** | Real-time streams for newly-listed, almost-graduated, and already-graduated tokens |
+| **Token Query** | Price, market cap, security risks, tax, LP lock, social links, top 10 holders, and more |
+| **Trending & Signals** | Trending leaderboards, AI signal picks, KOL / followed-wallet buy tracking |
+| **Wallet APIs** | Wallet list, balances, PnL stats, trade history |
+| **Auto Sell** | Custom take-profit / stop-loss ratios, automatic order placement, trailing-stop support |
+| **Token Launch** | Create new tokens on Solana and BSC |
+| **Ops & Health** | Health check, outbound IP lookup |
 
 ## Install
 
@@ -122,6 +144,13 @@ The skill will auto-select a wallet and confirm trade details with you before ex
 | Ethereum (`eth`) | ETH |
 | BSC (`bsc`) | BNB |
 | Base (`base`) | ETH |
+
+## Links
+
+- **Official Twitter**: [@useXXYYio](https://x.com/useXXYYio)
+- **Co-founder Twitter**: [@PepeBoost888](https://x.com/PepeBoost888)
+- **Lobster Community (Telegram)**: [XXYYCLAW](https://t.me/XXYYCLAW)
+- **Website**: [xxyy.io](https://www.xxyy.io)
 
 ## License
 
