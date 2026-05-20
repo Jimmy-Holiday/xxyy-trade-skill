@@ -58,10 +58,10 @@ All requests require header: `Authorization: Bearer $XXYY_API_KEY`
 > - `GET  /api/trade/open/api/ip` — Get IP (exempt from IP whitelist)
 > - `GET  /api/trade/open/api/kol-buy-list` — KOL Buy List
 > - `GET  /api/trade/open/api/tag-holder-buy-list` — Tag Holder Buy List
-> - `GET  /api/trade/open/api/label-list` — Label List (tokens with specific labels, SOL only)
-> - `POST /api/trade/open/api/signal-list` — Signal List (AI trending signals, SOL/BSC)
+> - `GET  /api/trade/open/api/label-list` — Label List (tokens with specific labels)
+> - `POST /api/trade/open/api/signal-list` — Signal List (AI trending signals)
 > - `POST /api/trade/open/api/trending-list` — Trending List (hot tokens by period, SOL/BSC)
-> - `POST /api/trade/open/api/{chain}/launch` — Launch Token (create new token, SOL/BSC)
+> - `POST /api/trade/open/api/{chain}/launch` — Launch Token (create new token)
 > - `POST /api/trade/open/api/autoSell/createOrUpdate` — Create/Update Auto-Sell Rules
 > - `GET  /api/trade/open/api/autoSell/list` — List Auto-Sell Rules
 > - `GET  /api/trade/open/api/autoSell/delete` — Delete Auto-Sell Rules
@@ -197,7 +197,7 @@ Retrieve Meme token lists: newly launched, almost graduated, or graduated.
 | Param | Required | Type | Valid values | Description |
 |-------|----------|------|-------------|-------------|
 | `type` | YES | path string | `NEW` / `ALMOST` / `COMPLETED` | NEW = newly launched, ALMOST = almost graduated, COMPLETED = graduated |
-| `chain` | NO | query string | `sol` / `bsc` | Only these 2 chains supported. Default `sol` |
+| `chain` | NO | query string | `sol` / `eth` / `bsc` / `base` | Default `sol`. All 4 chains supported |
 
 #### Body (Filter Parameters)
 
@@ -530,7 +530,7 @@ Get KOL (Key Opinion Leader) recent buy list. Shows tokens recently purchased by
 
 | Param | Required | Type | Valid values | Description |
 |-------|----------|------|-------------|-------------|
-| `chain` | NO | string | `sol` / `bsc` | Default `sol`. Only SOL and BSC supported |
+| `chain` | NO | string | `sol` / `eth` / `bsc` / `base` | Default `sol`. All 4 chains supported |
 
 #### KOL Buy List Response
 
@@ -595,7 +595,7 @@ Get tag holder (Smart Money, Whale, etc.) recent buy list. Shows tokens recently
 
 | Param | Required | Type | Valid values | Description |
 |-------|----------|------|-------------|-------------|
-| `chain` | NO | string | `sol` / `bsc` | Default `sol`. Only SOL and BSC supported |
+| `chain` | NO | string | `sol` / `eth` / `bsc` / `base` | Default `sol`. All 4 chains supported |
 
 #### Tag Holder Buy List Response
 
@@ -654,13 +654,13 @@ Response fields:
 ### Label List
 `GET ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/label-list?chain={chain}&labelType={labelType}`
 
-Get tokens with specific labels (e.g., AGENT_KOL marked tokens). Currently only supports Solana chain.
+Get tokens with specific labels (e.g., AGENT_KOL marked tokens).
 
 #### Label List Parameters
 
 | Param | Required | Type | Valid values | Description |
 |-------|----------|------|-------------|-------------|
-| `chain` | NO | string | `sol` / `bsc` | Default `sol`. Supports SOL and BSC |
+| `chain` | NO | string | `sol` / `eth` / `bsc` / `base` | Default `sol`. All 4 chains supported |
 | `labelType` | NO | string | `AGENT_KOL` | Default `AGENT_KOL`. Currently only AGENT_KOL supported |
 
 #### Label List Response
@@ -710,14 +710,14 @@ Response fields:
 ### Signal List
 `POST ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/signal-list?type={type}&chain={chain}`
 
-Get AI trend signal list (e.g., open-ai-trending tokens). Supports SOL and BSC chains.
+Get AI trend signal list (e.g., open-ai-trending tokens).
 
 #### Signal List Parameters
 
 | Param | Required | Type | Valid values | Description |
 |-------|----------|------|-------------|-------------|
 | `type` | NO | string | `open-ai-trending` | Default `open-ai-trending`. Currently only open-ai-trending supported |
-| `chain` | NO | string | `sol` / `bsc` | Default `sol`. Supports SOL and BSC |
+| `chain` | NO | string | `sol` / `eth` / `bsc` / `base` | Default `sol`. All 4 chains supported |
 
 Request body: Empty JSON object `{}`
 
@@ -855,13 +855,15 @@ Response fields:
 ### Launch Token
 `POST ${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/{chain}/launch`
 
-Launch (create) a new token on SOL or BSC chain. Optionally buy an initial amount of the newly created token.
+Launch (create) a new token. Optionally buy an initial amount of the newly created token.
+
+> **Note**: Chain restriction is lifted at the API level, but the current implementation only ships chain-specific options for `sol` (`solOptions`) and `bsc` (`bscOptions`). Launching on `eth`/`base` will fail downstream until corresponding options are added.
 
 #### Path Parameters
 
 | Param | Required | Type | Valid values | Description |
 |-------|----------|------|-------------|-------------|
-| `chain` | YES | string | `sol` / `bsc` | Only SOL and BSC supported |
+| `chain` | YES | string | `sol` / `eth` / `bsc` / `base` | See note above |
 
 #### Launch Request Body
 
@@ -1001,7 +1003,7 @@ On-chain execution failed:
 ## Feed Rules
 
 1. **type validation** -- Only accept `NEW`, `ALMOST`, `COMPLETED` (uppercase). Reject any other value.
-2. **chain validation** -- Feed only supports `sol` and `bsc`. If user specifies `eth` or `base`, reject and inform them that Feed scanning is only available on Solana and BSC chains.
+2. **chain validation** -- Supports all 4 chains: `sol`, `eth`, `bsc`, `base`. Default `sol`.
 3. **Single query mode (default)** -- Call the Feed API once, format and display key info for each token: symbol, priceUSD, marketCapUSD, holders, devHoldPercent, launchPlatform (name + progress).
 4. **Continuous monitor mode** -- Activate only when user explicitly says "持续监控", "monitor", or "watch":
    - Use a Bash polling loop, calling Feed API every 5 seconds
