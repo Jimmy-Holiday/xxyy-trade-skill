@@ -31,7 +31,7 @@
 | `label_list` | 获取特定标签的代币列表（如 AGENT_KOL），仅支持 SOL |
 | `signal_list` | 获取 AI 趋势信号代币列表（如 open-ai-trending），支持 SOL/BSC |
 | `trending_list` | 获取热门代币列表（按时间段），支持 SOL/BSC |
-| `launch_token` | 在 SOL 或 BSC 上发行（创建）新代币，可选初始买入 |
+| `launch_token` | 在 SOL 或 BSC 上发行新代币，支持 BSC OpenFour 模板，可选初始买入 |
 
 ## 前置条件
 
@@ -194,8 +194,22 @@ XXYY_API_KEY=<your-key> node /path/to/xxyy-trade-skill/mcp/dist/index.js
 | "获取 AI 趋势信号" | 查询 AI 趋势信号代币（支持 SOL/BSC）|
 | "看看 SOL 上的热门代币" | 按时间段查询热门代币（支持 SOL/BSC）|
 | "在 SOL 上发一个新代币" | 创建新代币，可选初始买入（支持 SOL/BSC）|
+| "在 BSC 上发一个 OpenFour Cubepeg 代币并买入 0.001 BNB" | 使用 OpenFour 模板 `1778027615728` 发射，`hookSalt` 由 Node 服务自动计算 |
 | "Ping 一下 XXYY API" | 验证连通性 |
 | "我的 IP 是什么？" | 查询出口 IP，用于配置白名单 |
+
+### BSC OpenFour 发射
+
+`launch_token` 在 BSC 支持以下 OpenFour 模板别名/ID：
+
+| 别名 | Template ID | 说明 |
+|------|-------------|------|
+| `skillroyalty` | `1778027615723` | 可选 `bsc_openfour_buyFeeRate` / `sellFeeRate`，单位 bps；`100 = 1%` |
+| `creator_incentives` | `1778027615724` | 普通发射使用服务端默认值即可 |
+| `likwid_dex` | `1778027615725` | 普通发射使用服务端默认值即可 |
+| `cubepeg` | `1778027615728` | 不传 `hookSalt` 时由 Node 服务自动 mining |
+
+使用 `bsc_launchMode=openfour`，并传 `bsc_openfourTemplate` 或 `bsc_openfourTemplateId`。除非你已经有编码后的 OpenFour 参数，否则不要使用高级 JSON 字段。
 
 ## 兼容性
 

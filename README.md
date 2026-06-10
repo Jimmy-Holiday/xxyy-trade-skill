@@ -9,7 +9,7 @@ Trade tokens on **Solana**, **Ethereum**, **BSC**, and **Base** chains via [XXYY
 ![chains](https://img.shields.io/badge/chains-SOL%20|%20ETH%20|%20BSC%20|%20Base-blue)
 ![fee](https://img.shields.io/badge/fee-as%20low%20as%200.4%25-brightgreen)
 ![rebate](https://img.shields.io/badge/rebate-enabled-orange)
-![version](https://img.shields.io/badge/version-1.5.1-informational)
+![version](https://img.shields.io/badge/version-1.6.0-informational)
 ![license](https://img.shields.io/badge/license-MIT-lightgrey)
 
 Supports **Claude Code Skill**, **OpenClaw**, and **MCP Server** (for Claude Desktop, Cursor, Windsurf, Cline, and more).
@@ -28,7 +28,7 @@ Supports **Claude Code Skill**, **OpenClaw**, and **MCP Server** (for Claude Des
 | **Trending & Signals** | Trending leaderboards, AI signal picks, KOL / followed-wallet buy tracking |
 | **Wallet APIs** | Wallet list, balances, PnL stats, trade history |
 | **Auto Sell** | Custom take-profit / stop-loss ratios, automatic order placement, trailing-stop support |
-| **Token Launch** | Create new tokens on Solana and BSC |
+| **Token Launch** | Create new tokens on Solana and BSC, including BSC OpenFour templates |
 | **Ops & Health** | Health check, outbound IP lookup |
 
 ## Install
@@ -131,6 +131,7 @@ Once installed, simply tell Claude what you want to do:
 - `"get AI trending signals"` (SOL/BSC)
 - `"show trending tokens on SOL"` (SOL/BSC)
 - `"launch a new token on SOL"` (SOL/BSC)
+- `"launch a BSC OpenFour Cubepeg token with 0.001 BNB initial buy"`
 
 The skill will auto-select a wallet and confirm trade details with you before executing.
 

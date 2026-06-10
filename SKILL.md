@@ -13,7 +13,7 @@ description: >-
   "holders", "top holders", "kol holders", "insider", "持仓", "持仓列表",
   or mentions trading on Solana/ETH/BSC/Base chains via XXYY.
   Enables on-chain token trading and data queries through the XXYY Open API.
-version: 1.5.1
+version: 1.6.0
 allowed-tools: Bash, Read, AskUserQuestion
 metadata: { "openclaw": { "requires": { "env": ["XXYY_API_KEY"], "bins": ["curl"] }, "primaryEnv": "XXYY_API_KEY", "emoji": "💹", "homepage": "https://www.xxyy.io" } }
 ---
@@ -908,9 +908,14 @@ Launch (create) a new token. Optionally buy an initial amount of the newly creat
 | `webUrl` | NO | string | "" | Website URL |
 | `twitterUrl` | NO | string | "" | Twitter URL |
 | `telegramUrl` | NO | string | "" | Telegram URL |
-| `tokenTaxInfo` | NO | object | null | Token tax configuration (see below) |
+| `launchMode` | NO | string | `legacy` | `legacy` for existing FourMeme launch, `openfour` for OpenFour templates |
+| `templateId` | OpenFour | string | - | OpenFour template ID, required when `launchMode=openfour` |
+| `openFourParams` | NO | object | null | Schema-native OpenFour params; service fills safe defaults when possible |
+| `initParams` | NO | object | null | Advanced: pre-encoded OpenFour module params. Avoid unless you know the schema bytes |
+| `antiSniperEnabled` | NO | boolean | null | Optional OpenFour anti-sniper toggle |
+| `tokenTaxInfo` | NO | object | null | Legacy BSC token tax configuration (see below); do not mix with OpenFour |
 
-#### tokenTaxInfo (BSC only)
+#### tokenTaxInfo (BSC legacy only)
 
 | Param | Required | Type | Description |
 |-------|----------|------|-------------|
@@ -923,6 +928,143 @@ Launch (create) a new token. Optionally buy an initial amount of the newly creat
 | `recipientAddress` | Conditional | string | Recipient address (0x...). Required when recipientRate > 0 |
 
 **Constraint:** burnRate + divideRate + liquidityRate + recipientRate must equal 100.
+
+#### BSC OpenFour Templates
+
+| Template ID | Name | MCP alias | Notes |
+|-------------|------|-----------|-------|
+| `1778027615723` | Goplus SkillRoyalty | `skillroyalty` | Tax / royalty template. Fee rates are basis points; `100 = 1%` |
+| `1778027615724` | Goplus Creator Incentives | `creator_incentives` | Usually works with service defaults |
+| `1778027615725` | Likwid Dex | `likwid_dex` | Usually works with service defaults |
+| `1778027615728` | Cubepeg | `cubepeg` | Node service auto-mines `hookSalt`; callers normally do not pass it |
+
+#### openFourParams (BSC OpenFour)
+
+| Param | Template | Type | Description |
+|-------|----------|------|-------------|
+| `buyFeeRate` | SkillRoyalty | integer | Buy fee in bps. `100 = 1%` |
+| `sellFeeRate` | SkillRoyalty | integer | Sell fee in bps. `100 = 1%` |
+| `rateFounder` | SkillRoyalty | integer | Founder fee share (0-100) |
+| `rateHolder` | SkillRoyalty | integer | Holder fee share (0-100) |
+| `rateBurn` | SkillRoyalty | integer | Burn fee share (0-100) |
+| `rateLiquidity` | SkillRoyalty | integer | Liquidity fee share (0-100) |
+| `minShare` | SkillRoyalty | string | Minimum share threshold; pass as a string to avoid large-number precision loss. Service default is safe for normal launches |
+| `founder` | SkillRoyalty | string | Founder EVM address; defaults to the signing wallet when omitted |
+| `renderer` | Cubepeg | string | Optional renderer EVM address; zero-address/default is acceptable |
+| `hookSalt` | Cubepeg advanced | bytes32 | Optional. Leave empty so Node auto-mines a valid salt |
+
+**OpenFour Notes:**
+- REST API payload uses nested `bscOptions.*` fields. MCP `launch_token` uses flat `bsc_*` fields and converts them into the REST payload before calling the API.
+- `launchMode` defaults to `legacy` in the REST API. In the MCP tool, `bsc_launchMode` may be omitted; if a supported OpenFour template alias/ID is provided, the tool infers OpenFour automatically.
+- Use legacy for existing FourMeme launches and legacy `tokenTaxInfo`; use OpenFour only when the user asks for one of the supported OpenFour templates. Do not mix legacy `tokenTaxInfo` with OpenFour params.
+- `buyAmount` becomes the OpenFour initial buy / presale quote in BNB. Use `"0"` for create-only, or e.g. `"0.001"` for create + initial buy.
+- Cubepeg `hookSalt` is mined by the Node service when omitted; only pass it for advanced deterministic deployments.
+- SkillRoyalty fee rates are bps, not percent. `buyFeeRate=100` and `sellFeeRate=100` mean 1% buy/sell fee. If you override distribution rates, `rateFounder + rateHolder + rateBurn + rateLiquidity` must equal 100.
+- `initParams` is an advanced escape hatch for already encoded OpenFour module params. Prefer `openFourParams` for normal integrations.
+
+#### MCP launch_token BSC OpenFour Parameters
+
+These are MCP tool parameters, not raw REST fields. The MCP server maps them into `bscOptions.launchMode`, `bscOptions.templateId`, `bscOptions.openFourParams`, and `bscOptions.initParams`.
+
+| MCP Param | Required | Type | Maps to REST | Description |
+|-----------|----------|------|--------------|-------------|
+| `bsc_launchMode` | NO | enum | `bscOptions.launchMode` | `legacy` or `openfour`. Can be omitted; OpenFour is inferred when a supported template is provided |
+| `bsc_openfourTemplate` | NO | enum | `bscOptions.templateId` | Alias: `skillroyalty`, `creator_incentives`, `likwid_dex`, `cubepeg` |
+| `bsc_openfourTemplateId` | OpenFour | string | `bscOptions.templateId` | One of `1778027615723`, `1778027615724`, `1778027615725`, `1778027615728` |
+| `bsc_openfour_antiSniperEnabled` | NO | boolean | `bscOptions.antiSniperEnabled` | Optional anti-sniper toggle |
+| `bsc_openfour_renderer` | Cubepeg only | string | `openFourParams.renderer` | Optional renderer EVM address |
+| `bsc_openfour_hookSalt` | NO | bytes32 | `openFourParams.hookSalt` | Advanced Cubepeg salt. Omit for auto-mining by Node service |
+| `bsc_openfour_buyFeeRate` | SkillRoyalty only | integer | `openFourParams.buyFeeRate` | Buy fee in bps; `100 = 1%` |
+| `bsc_openfour_sellFeeRate` | SkillRoyalty only | integer | `openFourParams.sellFeeRate` | Sell fee in bps; `100 = 1%` |
+| `bsc_openfour_rateFounder` | SkillRoyalty only | integer | `openFourParams.rateFounder` | Founder share (0-100) |
+| `bsc_openfour_rateHolder` | SkillRoyalty only | integer | `openFourParams.rateHolder` | Holder share (0-100) |
+| `bsc_openfour_rateBurn` | SkillRoyalty only | integer | `openFourParams.rateBurn` | Burn share (0-100) |
+| `bsc_openfour_rateLiquidity` | SkillRoyalty only | integer | `openFourParams.rateLiquidity` | Liquidity share (0-100) |
+| `bsc_openfour_minShare` | SkillRoyalty only | string | `openFourParams.minShare` | Minimum share threshold; pass as string |
+| `bsc_openfour_founder` | SkillRoyalty only | string | `openFourParams.founder` | Founder EVM address; defaults to signing wallet in Node service |
+| `bsc_openfourParamsJson` | NO | JSON object string | `bscOptions.openFourParams` | Advanced raw params, merged before typed `bsc_openfour_*` fields |
+| `bsc_openfourInitParamsJson` | NO | JSON object string | `bscOptions.initParams` | Advanced encoded module params; avoid unless schema bytes are known |
+
+#### MCP OpenFour launch_token Examples
+
+Cubepeg (`1778027615728`, hookSalt auto-mined):
+```json
+{
+  "chain": "bsc",
+  "walletAddress": "<BSC_WALLET>",
+  "name": "Cube Token",
+  "symbol": "CUBE",
+  "buyAmount": "0.001",
+  "bsc_desc": "OpenFour Cubepeg token",
+  "bsc_image": "https://example.com/image.png",
+  "bsc_label": "Meme",
+  "bsc_model": 1,
+  "bsc_feePlan": false,
+  "bsc_launchMode": "openfour",
+  "bsc_openfourTemplate": "cubepeg"
+}
+```
+
+Likwid Dex (`1778027615725`):
+```json
+{
+  "chain": "bsc",
+  "walletAddress": "<BSC_WALLET>",
+  "name": "Likwid Token",
+  "symbol": "LIQ",
+  "buyAmount": "0.001",
+  "bsc_desc": "OpenFour Likwid Dex token",
+  "bsc_image": "https://example.com/image.png",
+  "bsc_label": "Meme",
+  "bsc_model": 1,
+  "bsc_feePlan": false,
+  "bsc_launchMode": "openfour",
+  "bsc_openfourTemplate": "likwid_dex"
+}
+```
+
+Creator Incentives (`1778027615724`):
+```json
+{
+  "chain": "bsc",
+  "walletAddress": "<BSC_WALLET>",
+  "name": "Creator Token",
+  "symbol": "CRT",
+  "buyAmount": "0.001",
+  "bsc_desc": "OpenFour Creator Incentives token",
+  "bsc_image": "https://example.com/image.png",
+  "bsc_label": "Meme",
+  "bsc_model": 1,
+  "bsc_feePlan": false,
+  "bsc_launchMode": "openfour",
+  "bsc_openfourTemplate": "creator_incentives"
+}
+```
+
+SkillRoyalty (`1778027615723`, 1% buy/sell fee):
+```json
+{
+  "chain": "bsc",
+  "walletAddress": "<BSC_WALLET>",
+  "name": "Royalty Token",
+  "symbol": "ROY",
+  "buyAmount": "0.001",
+  "bsc_desc": "OpenFour SkillRoyalty token",
+  "bsc_image": "https://example.com/image.png",
+  "bsc_label": "Meme",
+  "bsc_model": 1,
+  "bsc_feePlan": false,
+  "bsc_launchMode": "openfour",
+  "bsc_openfourTemplate": "skillroyalty",
+  "bsc_openfour_buyFeeRate": 100,
+  "bsc_openfour_sellFeeRate": 100,
+  "bsc_openfour_rateFounder": 100,
+  "bsc_openfour_rateHolder": 0,
+  "bsc_openfour_rateBurn": 0,
+  "bsc_openfour_rateLiquidity": 0,
+  "bsc_openfour_minShare": "1"
+}
+```
 
 #### Launch Response
 
@@ -972,6 +1114,9 @@ On-chain execution failed:
 - Transaction confirmation timeout: SOL ~25s, BSC ~3-5s
 - SOL uri must be an accessible JSON metadata URL (Metaplex Token Metadata standard)
 - BSC image upload is handled by FourMeme platform internally
+- BSC legacy mode is for the existing FourMeme launch flow; BSC OpenFour mode is for the four supported OpenFour templates only
+- MCP `bsc_launchMode` can be omitted when `bsc_openfourTemplate` or `bsc_openfourTemplateId` is provided; otherwise BSC launch stays legacy
+- OpenFour does not use legacy `tokenTaxInfo`; use `openFourParams` / MCP `bsc_openfour_*` instead
 - SOL mint address is randomly generated by the server
 - SOL platform fee (1%) is charged automatically when buyAmount > 0
 
@@ -997,6 +1142,8 @@ On-chain execution failed:
    - `tip` must be provided; SOL chain: 0.0001-0.1 (unit: SOL); EVM chains: 0.1-100 (unit: Gwei). **If tip is outside the recommended range, must warn the user about potentially high cost and require explicit confirmation before proceeding**
    - `model` if provided must be 1 or 2
    - `priorityFee` if provided only applies to Solana chain
+   - For BSC launch, keep `launchMode=legacy` unless the user explicitly asks for OpenFour or provides a supported OpenFour template ID
+   - For OpenFour launch, require `templateId` to be one of `1778027615723`, `1778027615724`, `1778027615725`, `1778027615728`; do not mix legacy `tokenTaxInfo` with OpenFour params
    - **Do NOT send any field names outside the parameter tables above**
    - If any validation fails, refuse to send the request and ask the user to correct
 
@@ -1413,11 +1560,35 @@ curl -s -X POST "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/bs
   -H "Content-Type: application/json" \
   -d '{"walletAddress":"<BSC_WALLET>","name":"Exchange the world","symbol":"ETW","buyAmount":"0.001","bscOptions":{"desc":"Exchange the world","image":"https://example.com/image.png","label":"Meme","gasPrice":"3000000000","model":1,"feePlan":false}}'
 
-# Launch Token - BSC (with token tax)
+# Launch Token - BSC (with legacy token tax)
 curl -s -X POST "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/bsc/launch" \
   -H "Authorization: Bearer $XXYY_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"walletAddress":"<BSC_WALLET>","name":"Tax Token","symbol":"TAXT","buyAmount":"0.1","bscOptions":{"desc":"A token with tax","image":"https://example.com/image.png","label":"Defi","model":1,"tokenTaxInfo":{"feeRate":5,"burnRate":20,"divideRate":30,"liquidityRate":0,"recipientRate":50,"minSharing":100000,"recipientAddress":"0x..."}}}'
+
+# Launch Token - BSC OpenFour Cubepeg (create + buy 0.001 BNB; hookSalt auto-mined)
+curl -s -X POST "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/bsc/launch" \
+  -H "Authorization: Bearer $XXYY_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"walletAddress":"<BSC_WALLET>","name":"Cube Token","symbol":"CUBE","buyAmount":"0.001","bscOptions":{"desc":"OpenFour Cubepeg token","image":"https://example.com/image.png","label":"Meme","model":1,"launchMode":"openfour","templateId":"1778027615728"}}'
+
+# Launch Token - BSC OpenFour Likwid Dex
+curl -s -X POST "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/bsc/launch" \
+  -H "Authorization: Bearer $XXYY_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"walletAddress":"<BSC_WALLET>","name":"Likwid Token","symbol":"LIQ","buyAmount":"0","bscOptions":{"desc":"OpenFour Likwid Dex token","image":"https://example.com/image.png","label":"Meme","model":1,"launchMode":"openfour","templateId":"1778027615725"}}'
+
+# Launch Token - BSC OpenFour Creator Incentives
+curl -s -X POST "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/bsc/launch" \
+  -H "Authorization: Bearer $XXYY_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"walletAddress":"<BSC_WALLET>","name":"Creator Token","symbol":"CRT","buyAmount":"0.001","bscOptions":{"desc":"OpenFour Creator Incentives token","image":"https://example.com/image.png","label":"Meme","model":1,"launchMode":"openfour","templateId":"1778027615724"}}'
+
+# Launch Token - BSC OpenFour SkillRoyalty (1% buy/sell fee)
+curl -s -X POST "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/bsc/launch" \
+  -H "Authorization: Bearer $XXYY_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"walletAddress":"<BSC_WALLET>","name":"Royalty Token","symbol":"ROY","buyAmount":"0.001","bscOptions":{"desc":"OpenFour SkillRoyalty token","image":"https://example.com/image.png","label":"Meme","model":1,"launchMode":"openfour","templateId":"1778027615723","openFourParams":{"buyFeeRate":100,"sellFeeRate":100,"rateFounder":100,"rateHolder":0,"rateBurn":0,"rateLiquidity":0,"minShare":"1"}}}'
 
 # Auto-Sell: List rules
 curl -s "${XXYY_API_BASE_URL:-https://www.xxyy.io}/api/trade/open/api/autoSell/list" \

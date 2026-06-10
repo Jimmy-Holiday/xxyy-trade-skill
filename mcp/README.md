@@ -31,7 +31,7 @@ Supports **Solana**, **Ethereum**, **BSC**, and **Base** chains.
 | `label_list` | Get tokens with specific labels (e.g., AGENT_KOL), SOL only |
 | `signal_list` | Get AI trend signal tokens (e.g., open-ai-trending), SOL/BSC |
 | `trending_list` | Get trending/hot tokens by time period, SOL/BSC |
-| `launch_token` | Launch (create) a new token on SOL or BSC, with optional initial buy |
+| `launch_token` | Launch a new token on SOL or BSC, including BSC OpenFour templates, with optional initial buy |
 
 ## Prerequisites
 
@@ -194,8 +194,22 @@ After connecting, just tell your AI assistant:
 | "Get AI trending signals" | Query AI trend signal tokens (SOL/BSC) |
 | "Show trending tokens on SOL" | Get hot tokens by time period (SOL/BSC) |
 | "Launch a new token on SOL" | Create a new token, optionally buy initial amount |
+| "Launch a BSC OpenFour Cubepeg token with 0.001 BNB initial buy" | Create through OpenFour template `1778027615728`; hookSalt is auto-mined |
 | "Ping XXYY API" | Verify API Key connectivity |
 | "What's my IP?" | Check outbound IP for whitelist setup |
+
+### BSC OpenFour Launch
+
+`launch_token` supports these OpenFour template aliases/IDs on BSC:
+
+| Alias | Template ID | Notes |
+|-------|-------------|-------|
+| `skillroyalty` | `1778027615723` | Optional `bsc_openfour_buyFeeRate` / `sellFeeRate` in bps; `100 = 1%` |
+| `creator_incentives` | `1778027615724` | Uses service defaults for normal launches |
+| `likwid_dex` | `1778027615725` | Uses service defaults for normal launches |
+| `cubepeg` | `1778027615728` | `hookSalt` is auto-mined by the Node service when omitted |
+
+Use `bsc_launchMode=openfour` plus either `bsc_openfourTemplate` or `bsc_openfourTemplateId`. Leave advanced JSON fields empty unless you already have encoded OpenFour params.
 
 ## Compatibility
 

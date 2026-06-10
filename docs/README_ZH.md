@@ -9,7 +9,7 @@
 ![链](https://img.shields.io/badge/链-SOL%20|%20ETH%20|%20BSC%20|%20Base-blue)
 ![手续费](https://img.shields.io/badge/手续费-最低约%200.4%25-brightgreen)
 ![返佣](https://img.shields.io/badge/返佣-已启用-orange)
-![版本](https://img.shields.io/badge/版本-1.5.1-informational)
+![版本](https://img.shields.io/badge/版本-1.6.0-informational)
 ![许可证](https://img.shields.io/badge/许可证-MIT-lightgrey)
 
 支持 **Claude Code Skill**、**OpenClaw** 和 **MCP Server**（适用于 Claude Desktop、Cursor、Windsurf、Cline 等）。
@@ -28,7 +28,7 @@
 | **热门与信号** | 热门趋势榜单、AI 信号推荐、KOL / 关注钱包买入追踪 |
 | **钱包接口** | 自查钱包列表、余额、盈亏统计、交易历史 |
 | **自动止盈止损** | 自定义止盈止损比例，自动生成挂单，附带移动止损策略 |
-| **一键发币** | Solana 和 BSC 链上创建新代币 |
+| **一键发币** | Solana 和 BSC 链上创建新代币，BSC 支持 OpenFour 模板 |
 | **运维健康** | 接口连通性检测、出网地址查询 |
 
 ## 安装
@@ -131,6 +131,7 @@ export XXYY_API_BASE_URL=https://www.xxyy.io
 - `"获取 AI 趋势信号"` (支持 SOL/BSC)
 - `"看看 SOL 上的热门代币"` (支持 SOL/BSC)
 - `"在 SOL 上发一个新代币"` (支持 SOL/BSC)
+- `"在 BSC 上发一个 OpenFour Cubepeg 代币并买入 0.001 BNB"`
 
 Skill 会自动选择钱包，并在执行交易前与你确认交易细节。
 
